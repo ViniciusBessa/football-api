@@ -9,3 +9,190 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// Models
+
+model Country {
+  id      Int    @id @default(autoincrement())
+  name    String @unique @db.VarChar(80)
+  code    String @unique @db.VarChar(2)
+  flagUrl String @db.Text
+
+  teams   Team[]
+  players Player[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("countries")
+}
+
+model Position {
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(80)
+
+  players Player[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("positions")
+}
+
+model Competition {
+  id      Int             @id @default(autoincrement())
+  name    String          @unique @db.VarChar(80)
+  code    String          @unique @db.VarChar(2)
+  logoUrl String          @db.Text
+  type    CompetitionType
+
+  trophies Trophy[]
+  matches  Match[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("competitions")
+}
+
+model Season {
+  id        Int      @id @default(autoincrement())
+  year      Int      @unique @db.Integer
+  start     DateTime @db.Date
+  end       DateTime @db.Date
+  isCurrent Boolean  @default(true) @db.Boolean
+
+  trophies Trophy[]
+  matches  Match[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("seasons")
+}
+
+model Team {
+  id           Int      @id @default(autoincrement())
+  name         String   @unique @db.VarChar(75)
+  code         String   @unique @db.VarChar(3)
+  foundingYear DateTime @db.Date
+  logoUrl      String   @db.Text
+  isNational   Boolean  @default(false) @db.Boolean
+
+  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  countryId Int
+
+  players     Player[]
+  trohpies    Trophy[]
+  homeMatches Match[]      @relation(name: "homeMatches")
+  awayMatches Match[]      @relation(name: "awayMatches")
+  matchGoals  MatchGoals[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("teams")
+}
+
+model Player {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(90)
+  code        String   @unique @db.VarChar(3)
+  dateOfBirth DateTime @db.Date
+  height      Decimal  @db.Decimal(3, 2)
+  weight      Decimal  @db.Decimal(4, 1)
+
+  position   Position @relation(fields: [positionId], references: [id], onDelete: Cascade)
+  positionId Int
+
+  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  countryId Int
+
+  currentTeam   Team @relation(fields: [currentTeamId], references: [id], onDelete: Cascade)
+  currentTeamId Int
+
+  goals   MatchGoals[] @relation(name: "goals")
+  assists MatchGoals[] @relation(name: "assists")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("players")
+}
+
+model Trophy {
+  id Int @id @default(autoincrement())
+
+  competition   Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  competitionId Int
+
+  season   Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  seasonId Int
+
+  team   Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("trophies")
+}
+
+model Match {
+  id Int @id @default(autoincrement())
+
+  homeTeam   Team @relation(fields: [homeTeamId], references: [id], onDelete: Cascade, name: "homeMatches")
+  homeTeamId Int
+
+  awayTeam   Team @relation(fields: [awayTeamId], references: [id], onDelete: Cascade, name: "awayMatches")
+  awayTeamId Int
+
+  competition   Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  competitionId Int
+
+  season   Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  seasonId Int
+
+  matchGoals MatchGoals[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("matches")
+}
+
+model MatchGoals {
+  id Int @id @default(autoincrement())
+
+  match   Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  matchId Int
+
+  team   Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId Int
+
+  goalscorer   Player @relation(fields: [goalscorerId], references: [id], onDelete: Cascade, name: "goals")
+  goalscorerId Int
+
+  assistant   Player @relation(fields: [assistantId], references: [id], onDelete: Cascade, name: "assists")
+  assistantId Int
+
+  isOwnGoal     Boolean  @db.Boolean
+  goalTimestamp DateTime @db.Timestamp()
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("match_goals")
+}
+
+// Enums
+
+enum CompetitionType {
+  CUP
+  LEAGUE
+}
+
+enum Role {
+  USER
+  ADMIN
+}
