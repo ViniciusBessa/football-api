@@ -16,15 +16,15 @@ const getUserPayload = async (user: User): Promise<UserPayload> => {
 const createToken = async (userPayload: UserPayload): Promise<string> => {
   const token = await new SignJWT({ ...userPayload })
     .setProtectedHeader({ alg: 'HS256' })
-    .setExpirationTime(process.env.JWT_EXPIRES_IN || '30d')
-    .sign(new TextEncoder().encode(process.env.JWT_SECRET as string));
+    .setExpirationTime(Bun.env.JWT_EXPIRES_IN || '30d')
+    .sign(new TextEncoder().encode(Bun.env.JWT_SECRET as string));
   return token;
 };
 
 const verifyToken = async (token: string): Promise<UserPayload> => {
   const userPayload = await jwtVerify(
     token,
-    new TextEncoder().encode(process.env.JWT_SECRET as string)
+    new TextEncoder().encode(Bun.env.JWT_SECRET as string)
   );
   return userPayload.payload as unknown as UserPayload;
 };

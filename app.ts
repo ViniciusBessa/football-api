@@ -1,7 +1,4 @@
 import express, { Express } from 'express';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const app: Express = express();
 
@@ -18,8 +15,8 @@ app.use(helmet());
 
 app.use(
   cors({
-    credentials: process.env.NODE_ENV === 'production',
-    origin: process.env.CORS_ORIGIN || '*',
+    credentials: Bun.env.NODE_ENV === 'production',
+    origin: Bun.env.CORS_ORIGIN || '*',
   })
 );
 
