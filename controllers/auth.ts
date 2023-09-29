@@ -55,7 +55,7 @@ const loginUser = asyncWrapper(
     const user = (await prisma.user.findFirst({ where: { email } }))!;
 
     // Comparing the password submitted by the user to the one in the database
-    const passwordMatches = await comparePassword(password, user.password);
+    const passwordMatches = await comparePassword(user.password, password);
 
     if (!passwordMatches) {
       throw new BadRequestError(USER_MESSAGES.PASSWORD_INCORRECT);

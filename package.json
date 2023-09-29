@@ -6,7 +6,6 @@
     "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.14",
     "@types/express": "^4.17.18",
-    "@types/jsonwebtoken": "^9.0.3",
     "@types/supertest": "^2.0.13",
     "bun-types": "latest",
     "prisma": "^5.3.1",
@@ -26,12 +25,12 @@
     "express-rate-limit": "^7.0.2",
     "helmet": "^7.0.0",
     "http-status-codes": "^2.3.0",
-    "jsonwebtoken": "^9.0.2"
+    "jose": "^4.14.6"
   },
   "scripts": {
     "build": "bun tsc && bun run prisma migrate deploy && bun run prisma generate",
     "start": "bun ./dist/server.js",
-    "dev": "bun server.ts",
+    "dev": "bun --watch server.ts",
     "db": "prisma migrate reset --force",
     "test": "bun db && bun test"
   },
