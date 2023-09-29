@@ -1,10 +1,15 @@
 import { User } from '@prisma/client';
-import { JWTPayload, jwtVerify, SignJWT } from 'jose';
+import { jwtVerify, SignJWT } from 'jose';
 import { UserPayload } from '../types/user-payload';
 
 const getUserPayload = async (user: User): Promise<UserPayload> => {
   return {
-    ...user,
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
   };
 };
 
@@ -16,14 +21,12 @@ const createToken = async (userPayload: UserPayload): Promise<string> => {
   return token;
 };
 
-const verifyToken = async (token: string): Promise<JWTPayload> => {
+const verifyToken = async (token: string): Promise<UserPayload> => {
   const userPayload = await jwtVerify(
     token,
     new TextEncoder().encode(process.env.JWT_SECRET as string)
   );
-  console.log(userPayload);
-
-  return userPayload.payload;
+  return userPayload.payload as unknown as UserPayload;
 };
 
 export { getUserPayload, createToken, verifyToken };
