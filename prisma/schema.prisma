@@ -212,13 +212,13 @@ model Transfer {
   newTeam   Team @relation(fields: [newTeamId], references: [id], onDelete: Cascade, name: "playersBought")
   newTeamId Int
 
-  trasnferFee Decimal  @db.Decimal(12, 2)
+  transferFee Decimal  @db.Decimal(12, 2)
   date        DateTime @db.Date
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("transfer")
+  @@map("transfers")
 }
 
 // Enums

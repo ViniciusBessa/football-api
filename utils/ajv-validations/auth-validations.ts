@@ -1,10 +1,6 @@
 import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
-import {
-  LoginUserInput,
-  RegisterUserInput,
-  UpdateUserInput,
-} from '../../types/auth-input';
+import { LoginUserInput, RegisterUserInput } from '../../types/auth-input';
 import { EMAIL_REGEX } from '../email-regex';
 import { PrismaClient } from '@prisma/client';
 
