@@ -95,11 +95,13 @@ model Team {
   country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
   countryId Int
 
-  players     Player[]
-  trohpies    Trophy[]
-  homeMatches Match[]      @relation(name: "homeMatches")
-  awayMatches Match[]      @relation(name: "awayMatches")
-  matchGoals  MatchGoals[]
+  players       Player[]
+  trohpies      Trophy[]
+  homeMatches   Match[]      @relation(name: "homeMatches")
+  awayMatches   Match[]      @relation(name: "awayMatches")
+  matchGoals    MatchGoals[]
+  playersSold   Transfer[]   @relation(name: "playersSold")
+  playersBought Transfer[]   @relation(name: "playersBought")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -110,7 +112,6 @@ model Team {
 model Player {
   id          Int      @id @default(autoincrement())
   name        String   @unique @db.VarChar(90)
-  code        String   @unique @db.VarChar(3)
   dateOfBirth DateTime @db.Date
   height      Decimal  @db.Decimal(3, 2)
   weight      Decimal  @db.Decimal(4, 1)
@@ -127,8 +128,9 @@ model Player {
   goals   MatchGoals[] @relation(name: "goals")
   assists MatchGoals[] @relation(name: "assists")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Transfer  Transfer[]
 
   @@map("players")
 }
@@ -196,6 +198,27 @@ model MatchGoals {
   updatedAt DateTime @updatedAt
 
   @@map("match_goals")
+}
+
+model Transfer {
+  id Int @id @default(autoincrement())
+
+  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  playerId Int
+
+  previousTeam   Team @relation(fields: [previousTeamId], references: [id], onDelete: Cascade, name: "playersSold")
+  previousTeamId Int
+
+  newTeam   Team @relation(fields: [newTeamId], references: [id], onDelete: Cascade, name: "playersBought")
+  newTeamId Int
+
+  trasnferFee Decimal  @db.Decimal(12, 2)
+  date        DateTime @db.Date
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("transfer")
 }
 
 // Enums
