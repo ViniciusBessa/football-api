@@ -8,6 +8,7 @@ export interface CreateTeamInput {
 }
 
 export interface UpdateTeamInput {
+  id: number;
   name?: string;
   code?: string;
   foundingYear?: Date;

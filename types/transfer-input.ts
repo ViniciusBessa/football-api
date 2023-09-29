@@ -7,6 +7,7 @@ export interface CreateTransferInput {
 }
 
 export interface UpdateTransferInput {
+  id: number;
   playerId?: number;
   previousTeamId?: number;
   newTeamId?: number;

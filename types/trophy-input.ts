@@ -5,6 +5,7 @@ export interface CreateTrophyInput {
 }
 
 export interface UpdateTrophyInput {
+  id: number;
   competitionId?: number;
   seasonId?: number;
   teamId?: number;

@@ -8,6 +8,7 @@ export interface CreateMatchGoalInput {
 }
 
 export interface UpdateMatchGoalInput {
+  id: number;
   matchId?: number;
   teamId?: number;
   goalscorerId?: number;

@@ -8,6 +8,7 @@ export interface CreateCompetitionInput {
 }
 
 export interface UpdateCompetitionInput {
+  id: number;
   name?: string;
   code?: string;
   logo_url?: string;

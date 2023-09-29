@@ -3,6 +3,7 @@ export interface CreatePositionInput {
 }
 
 export interface UpdatePositionInput {
+  id: number;
   name?: string;
 }
 

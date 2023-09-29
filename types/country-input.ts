@@ -5,6 +5,7 @@ export interface CreateCountryInput {
 }
 
 export interface UpdateCountryInput {
+  id: number;
   name?: string;
   code?: string;
   flagUrl?: string;

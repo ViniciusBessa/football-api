@@ -9,6 +9,7 @@ export interface CreatePlayerInput {
 }
 
 export interface UpdatePlayerInput {
+  id: number;
   name?: string;
   dateOfBirth?: Date;
   height?: number;

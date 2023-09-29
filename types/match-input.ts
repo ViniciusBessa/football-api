@@ -6,6 +6,7 @@ export interface CreateMatchInput {
 }
 
 export interface UpdateMatchInput {
+  id: number;
   homeTeamId?: number;
   awayTeamId?: number;
   competitionId?: number;
