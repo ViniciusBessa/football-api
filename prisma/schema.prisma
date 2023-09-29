@@ -12,6 +12,19 @@ datasource db {
 
 // Models
 
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String @unique @db.VarChar(50)
+  email    String @unique @db.VarChar(80)
+  password String @db.Text
+  role     Role   @default(USER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
 model Country {
   id      Int    @id @default(autoincrement())
   name    String @unique @db.VarChar(80)
