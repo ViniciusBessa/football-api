@@ -25,6 +25,7 @@ const COUNTRY_MESSAGES = {
   CODE_TYPE: "The country's code must be a string",
   CODE_LENGTH: `The country's code must have exactly ${CODE_LENGTH} characters`,
   CODE_REQUIRED: 'Please, provide a code to the country',
+  CODE_IN_USE: 'The code provided is already in use',
   NOT_FOUND: 'No country was found with the provided id',
   ID_TYPE: "The country's id must be a number or a string",
   ID_REQUIRED: 'Please, provide the id of a country',
@@ -44,6 +45,14 @@ ajv.addKeyword({
 });
 
 ajv.addKeyword({
+  keyword: 'codeIsAvailable',
+  async: true,
+  type: 'string',
+  schema: false,
+  validate: codeIsAvailable,
+});
+
+ajv.addKeyword({
   keyword: 'countryExists',
   async: true,
   type: 'number',
@@ -52,10 +61,17 @@ ajv.addKeyword({
 });
 
 async function nameIsAvailable(name: string): Promise<boolean> {
-  const positions = await prisma.country.findMany({
+  const countries = await prisma.country.findMany({
     where: { name },
   });
-  return positions.length === 0;
+  return countries.length === 0;
+}
+
+async function codeIsAvailable(code: string): Promise<boolean> {
+  const countries = await prisma.country.findMany({
+    where: { code },
+  });
+  return countries.length === 0;
 }
 
 async function countryExists(countryId: number): Promise<boolean> {
@@ -102,11 +118,13 @@ const createCountrySchema = ajv.compile<CreateCountryInput>({
       type: 'string',
       minLength: CODE_LENGTH,
       maxLength: CODE_LENGTH,
+      codeIsAvailable: true,
 
       errorMessage: {
         type: COUNTRY_MESSAGES.CODE_TYPE,
         minLength: COUNTRY_MESSAGES.CODE_LENGTH,
         maxLength: COUNTRY_MESSAGES.CODE_LENGTH,
+        codeIsAvailable: COUNTRY_MESSAGES.CODE_IN_USE,
       },
     },
 
@@ -168,11 +186,13 @@ const updateCountrySchema = ajv.compile<UpdateCountryInput>({
       type: 'string',
       minLength: CODE_LENGTH,
       maxLength: CODE_LENGTH,
+      codeIsAvailable: true,
 
       errorMessage: {
         type: COUNTRY_MESSAGES.CODE_TYPE,
         minLength: COUNTRY_MESSAGES.CODE_LENGTH,
         maxLength: COUNTRY_MESSAGES.CODE_LENGTH,
+        codeIsAvailable: COUNTRY_MESSAGES.CODE_IN_USE,
       },
     },
 
