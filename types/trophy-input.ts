@@ -11,6 +11,6 @@ export interface UpdateTrophyInput {
   teamId?: number;
 }
 
-export interface DeleteTrophyInput {
+export interface GetTrophyInput {
   id: number;
 }

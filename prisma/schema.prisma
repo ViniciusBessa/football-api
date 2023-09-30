@@ -188,8 +188,8 @@ model MatchGoals {
   goalscorer   Player @relation(fields: [goalscorerId], references: [id], onDelete: Cascade, name: "goals")
   goalscorerId Int
 
-  assistant   Player @relation(fields: [assistantId], references: [id], onDelete: Cascade, name: "assists")
-  assistantId Int
+  assistant   Player? @relation(fields: [assistantId], references: [id], onDelete: Cascade, name: "assists")
+  assistantId Int?
 
   isOwnGoal     Boolean  @db.Boolean
   goalTimestamp DateTime @db.Timestamp()

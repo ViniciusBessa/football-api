@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import {
   CreateMatchGoalInput,
-  DeleteMatchGoalInput,
+  GetMatchGoalInput,
   UpdateMatchGoalInput,
 } from '../../types/match-goal-input';
 import { matchExists } from './matches-validations';
@@ -25,7 +25,6 @@ const MATCH_GOAL_MESSAGES = {
   GOALSCORER_NOT_FOUND:
     'No player was found with the id provided for the goalscorer',
   ASSISTANT_ID_TYPE: "The type of the assistant's id must be string or number",
-  ASSISTANT_ID_REQUIRED: 'Please, provide the id of the assistant',
   ASSISTANT_NOT_FOUND:
     'No player was found with the id provided for the assistant',
   OWN_GOAL_TYPE: "The type of the property 'is own goal' must be a boolean",
@@ -102,7 +101,6 @@ const createMatchGoalSchema = ajv.compile<CreateMatchGoalInput>({
           matchId: MATCH_GOAL_MESSAGES.MATCH_ID_REQUIRED,
           teamId: MATCH_GOAL_MESSAGES.TEAM_ID_REQUIRED,
           goalscorerId: MATCH_GOAL_MESSAGES.GOALSCORER_ID_REQUIRED,
-          assistantId: MATCH_GOAL_MESSAGES.ASSISTANT_ID_REQUIRED,
           isOwnGoal: MATCH_GOAL_MESSAGES.OWN_GOAL_REQUIRED,
           goalTimestamp: MATCH_GOAL_MESSAGES.GOAL_TIMESTAMP_REQUIRED,
         },
@@ -262,8 +260,8 @@ const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
   },
 });
 
-// Deletion Schema
-const deleteMatchGoalSchema = ajv.compile<DeleteMatchGoalInput>({
+// Get Schema
+const getMatchGoalSchema = ajv.compile<GetMatchGoalInput>({
   type: 'object',
   $async: true,
 
@@ -298,6 +296,6 @@ const deleteMatchGoalSchema = ajv.compile<DeleteMatchGoalInput>({
 export {
   createMatchGoalSchema,
   updateMatchGoalSchema,
-  deleteMatchGoalSchema,
+  getMatchGoalSchema,
   MATCH_GOAL_MESSAGES,
 };

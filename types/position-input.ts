@@ -7,6 +7,6 @@ export interface UpdatePositionInput {
   name?: string;
 }
 
-export interface DeletePositionInput {
+export interface GetPositionInput {
   id: number;
 }

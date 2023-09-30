@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import {
   CreateTransferInput,
-  DeleteTransferInput,
+  GetTransferInput,
   UpdateTransferInput,
 } from '../../types/transfer-input';
 import { playerExists } from './players-validations';
@@ -243,8 +243,8 @@ const updateTransferSchema = ajv.compile<UpdateTransferInput>({
   },
 });
 
-// Deletion Schema
-const deleteTransferSchema = ajv.compile<DeleteTransferInput>({
+// Get Schema
+const getTransferSchema = ajv.compile<GetTransferInput>({
   type: 'object',
   $async: true,
 
@@ -279,6 +279,6 @@ const deleteTransferSchema = ajv.compile<DeleteTransferInput>({
 export {
   createTransferSchema,
   updateTransferSchema,
-  deleteTransferSchema,
+  getTransferSchema,
   TRANSFER_MESSAGES,
 };

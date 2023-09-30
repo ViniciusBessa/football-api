@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import {
   CreatePositionInput,
-  DeletePositionInput,
+  GetPositionInput,
   UpdatePositionInput,
 } from '../../types/position-input';
 
@@ -141,8 +141,8 @@ const updatePositionSchema = ajv.compile<UpdatePositionInput>({
   },
 });
 
-// Deletion Schema
-const deletePositionSchema = ajv.compile<DeletePositionInput>({
+// Get Schema
+const getPositionSchema = ajv.compile<GetPositionInput>({
   type: 'object',
   $async: true,
 
@@ -177,7 +177,7 @@ const deletePositionSchema = ajv.compile<DeletePositionInput>({
 export {
   createPositionSchema,
   updatePositionSchema,
-  deletePositionSchema,
+  getPositionSchema,
   POSITION_MESSAGES,
   positionExists,
 };

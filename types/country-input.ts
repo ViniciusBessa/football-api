@@ -11,6 +11,6 @@ export interface UpdateCountryInput {
   flagUrl?: string;
 }
 
-export interface DeleteCountryInput {
+export interface GetCountryInput {
   id: number;
 }

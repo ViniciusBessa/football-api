@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import {
   CreateCountryInput,
-  DeleteCountryInput,
+  GetCountryInput,
   UpdateCountryInput,
 } from '../../types/country-input';
 
@@ -210,8 +210,8 @@ const updateCountrySchema = ajv.compile<UpdateCountryInput>({
   },
 });
 
-// Deletion Schema
-const deleteCountrySchema = ajv.compile<DeleteCountryInput>({
+// Get Schema
+const getCountrySchema = ajv.compile<GetCountryInput>({
   type: 'object',
   $async: true,
 
@@ -246,7 +246,7 @@ const deleteCountrySchema = ajv.compile<DeleteCountryInput>({
 export {
   createCountrySchema,
   updateCountrySchema,
-  deleteCountrySchema,
+  getCountrySchema,
   COUNTRY_MESSAGES,
   countryExists,
 };

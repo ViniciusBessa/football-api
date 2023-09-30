@@ -13,6 +13,6 @@ export interface UpdateMatchInput {
   seasonId?: number;
 }
 
-export interface DeleteMatchInput {
+export interface GetMatchInput {
   id: number;
 }

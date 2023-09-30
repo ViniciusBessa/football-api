@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import {
   CreateMatchInput,
-  DeleteMatchInput,
+  GetMatchInput,
   UpdateMatchInput,
 } from '../../types/match-input';
 import { competitionExists } from './competitions-validations';
@@ -178,8 +178,8 @@ const updateMatchSchema = ajv.compile<UpdateMatchInput>({
   },
 });
 
-// Deletion Schema
-const deleteMatchSchema = ajv.compile<DeleteMatchInput>({
+// Get Schema
+const getMatchSchema = ajv.compile<GetMatchInput>({
   type: 'object',
   $async: true,
 
@@ -209,4 +209,4 @@ const deleteMatchSchema = ajv.compile<DeleteMatchInput>({
   },
 });
 
-export { createMatchSchema, updateMatchSchema, deleteMatchSchema, matchExists };
+export { createMatchSchema, updateMatchSchema, getMatchSchema, matchExists };

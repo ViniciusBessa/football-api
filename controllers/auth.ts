@@ -19,8 +19,9 @@ const registerUser = asyncWrapper(
     // Validating the name, email and password
     try {
       await registerUserSchema({ name, email, password });
-    } catch (err: any) {
-      throw new BadRequestError(err.errors![0].message as string);
+    } catch (error: any) {
+      const errorMessage = error.errors[0].message as string;
+      throw new BadRequestError(errorMessage);
     }
 
     // Hashing the password
@@ -46,11 +47,13 @@ const loginUser = asyncWrapper(
     // Validating the email and password
     try {
       await loginUserSchema({ email, password });
-    } catch (err: any) {
-      if (err.errors![0].message === USER_MESSAGES.NOT_FOUND) {
-        throw new NotFoundError(err.errors![0].message as string);
+    } catch (error: any) {
+      const errorMessage = error.errors[0].message as string;
+
+      if (errorMessage.includes('was found')) {
+        throw new NotFoundError(errorMessage);
       }
-      throw new BadRequestError(err.errors![0].message as string);
+      throw new BadRequestError(errorMessage);
     }
     const user = (await prisma.user.findFirst({ where: { email } }))!;
 

@@ -17,6 +17,6 @@ export interface UpdateMatchGoalInput {
   goalTimeStamp?: Date;
 }
 
-export interface DeleteMatchGoalInput {
+export interface GetMatchGoalInput {
   id: number;
 }

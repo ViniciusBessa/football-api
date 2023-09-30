@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import {
   CreateTrophyInput,
-  DeleteTrophyInput,
+  GetTrophyInput,
   UpdateTrophyInput,
 } from '../../types/trophy-input';
 import { competitionExists } from './competitions-validations';
@@ -185,8 +185,8 @@ const updateTrophySchema = ajv.compile<UpdateTrophyInput>({
   },
 });
 
-// Deletion Schema
-const deleteTrophySchema = ajv.compile<DeleteTrophyInput>({
+// Get Schema
+const getTrophySchema = ajv.compile<GetTrophyInput>({
   type: 'object',
   $async: true,
 
@@ -216,4 +216,4 @@ const deleteTrophySchema = ajv.compile<DeleteTrophyInput>({
   },
 });
 
-export { createTrophySchema, updateTrophySchema, deleteTrophySchema };
+export { createTrophySchema, updateTrophySchema, getTrophySchema };

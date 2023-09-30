@@ -15,6 +15,6 @@ export interface UpdateCompetitionInput {
   type?: CompetitionType;
 }
 
-export interface DeleteCompetitionInput {
+export interface GetCompetitionInput {
   id: number;
 }

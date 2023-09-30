@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import {
   CreateCompetitionInput,
-  DeleteCompetitionInput,
+  GetCompetitionInput,
   UpdateCompetitionInput,
 } from '../../types/competition-input';
 
@@ -229,8 +229,8 @@ const updateCompetitionSchema = ajv.compile<UpdateCompetitionInput>({
   },
 });
 
-// Deletion Schema
-const deleteCompetitionSchema = ajv.compile<DeleteCompetitionInput>({
+// Get Schema
+const getCompetitionSchema = ajv.compile<GetCompetitionInput>({
   type: 'object',
   $async: true,
 
@@ -265,6 +265,6 @@ const deleteCompetitionSchema = ajv.compile<DeleteCompetitionInput>({
 export {
   createCompetitionSchema,
   updateCompetitionSchema,
-  deleteCompetitionSchema,
+  getCompetitionSchema,
   competitionExists,
 };

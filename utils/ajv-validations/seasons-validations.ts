@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import {
   CreateSeasonInput,
-  DeleteSeasonInput,
+  GetSeasonInput,
   UpdateSeasonInput,
 } from '../../types/season-input';
 
@@ -198,8 +198,8 @@ const updateSeasonSchema = ajv.compile<UpdateSeasonInput>({
   },
 });
 
-// Deletion Schema
-const deleteSeasonSchema = ajv.compile<DeleteSeasonInput>({
+// Get Schema
+const getSeasonSchema = ajv.compile<GetSeasonInput>({
   type: 'object',
   $async: true,
 
@@ -234,7 +234,7 @@ const deleteSeasonSchema = ajv.compile<DeleteSeasonInput>({
 export {
   createSeasonSchema,
   updateSeasonSchema,
-  deleteSeasonSchema,
+  getSeasonSchema,
   SEASON_MESSAGES,
   seasonExists,
 };

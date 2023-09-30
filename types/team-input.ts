@@ -17,6 +17,6 @@ export interface UpdateTeamInput {
   countryId?: number;
 }
 
-export interface DeleteTeamInput {
+export interface GetTeamInput {
   id: number;
 }

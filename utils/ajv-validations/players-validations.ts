@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import {
   CreatePlayerInput,
-  DeletePlayerInput,
+  GetPlayerInput,
   UpdatePlayerInput,
 } from '../../types/player-input';
 import { countryExists } from './countries-validations';
@@ -332,8 +332,8 @@ const updatePlayerSchema = ajv.compile<UpdatePlayerInput>({
   },
 });
 
-// Deletion Schema
-const deletePlayerSchema = ajv.compile<DeletePlayerInput>({
+// Get Schema
+const getPlayerSchema = ajv.compile<GetPlayerInput>({
   type: 'object',
   $async: true,
 
@@ -368,6 +368,6 @@ const deletePlayerSchema = ajv.compile<DeletePlayerInput>({
 export {
   createPlayerSchema,
   updatePlayerSchema,
-  deletePlayerSchema,
+  getPlayerSchema,
   playerExists,
 };

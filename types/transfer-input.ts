@@ -15,6 +15,6 @@ export interface UpdateTransferInput {
   date?: Date;
 }
 
-export interface DeleteTransferInput {
+export interface GetTransferInput {
   id: number;
 }

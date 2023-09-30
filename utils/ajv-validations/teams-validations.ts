@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import {
   CreateTeamInput,
-  DeleteTeamInput,
+  GetTeamInput,
   UpdateTeamInput,
 } from '../../types/team-input';
 import { countryExists } from './countries-validations';
@@ -292,8 +292,8 @@ const updateTeamSchema = ajv.compile<UpdateTeamInput>({
   },
 });
 
-// Deletion Schema
-const deleteTeamSchema = ajv.compile<DeleteTeamInput>({
+// Get Schema
+const getTeamSchema = ajv.compile<GetTeamInput>({
   type: 'object',
   $async: true,
 
@@ -325,4 +325,4 @@ const deleteTeamSchema = ajv.compile<DeleteTeamInput>({
   },
 });
 
-export { createTeamSchema, updateTeamSchema, deleteTeamSchema, teamExists };
+export { createTeamSchema, updateTeamSchema, getTeamSchema, teamExists };

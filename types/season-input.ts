@@ -13,6 +13,6 @@ export interface UpdateSeasonInput {
   isCurrent?: boolean;
 }
 
-export interface DeleteSeasonInput {
+export interface GetSeasonInput {
   id: number;
 }
