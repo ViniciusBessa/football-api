@@ -21,11 +21,11 @@ const getAllSeasons = asyncWrapper(
 
 const getSpecificSeason = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { seasonId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getSeasonSchema({ id });
+      await getSeasonSchema({ id: seasonId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -33,7 +33,7 @@ const getSpecificSeason = asyncWrapper(
 
     // Getting the season and responding
     const season = await prisma.season.findFirst({
-      where: { id: Number(id) },
+      where: { id: Number(seasonId) },
     });
     return res.status(StatusCodes.OK).json({ season });
   }
@@ -65,12 +65,12 @@ const createSeason = asyncWrapper(
 
 const updateSeason = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { seasonId } = req.params;
     const { year, start, end, isCurrent } = req.body;
 
     // Validating the data passed through the request
     try {
-      await updateSeasonSchema({ id, year, start, end, isCurrent });
+      await updateSeasonSchema({ id: seasonId, year, start, end, isCurrent });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
 
@@ -82,7 +82,7 @@ const updateSeason = asyncWrapper(
 
     // Updating the season and responding
     const season = await prisma.season.update({
-      where: { id: Number(id) },
+      where: { id: Number(seasonId) },
       data: { year, start, end, isCurrent },
     });
     return res.status(StatusCodes.OK).json({ season });
@@ -91,11 +91,11 @@ const updateSeason = asyncWrapper(
 
 const deleteSeason = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { seasonId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getSeasonSchema({ id });
+      await getSeasonSchema({ id: seasonId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -103,7 +103,7 @@ const deleteSeason = asyncWrapper(
 
     // Deleting the season from the database and responding
     const season = await prisma.season.delete({
-      where: { id: Number(id) },
+      where: { id: Number(seasonId) },
     });
     return res.status(StatusCodes.OK).json({ season });
   }

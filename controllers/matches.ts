@@ -21,11 +21,11 @@ const getAllMatches = asyncWrapper(
 
 const getSpecificMatch = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { matchId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getMatchSchema({ id });
+      await getMatchSchema({ id: matchId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -33,7 +33,7 @@ const getSpecificMatch = asyncWrapper(
 
     // Getting the match and responding
     const match = await prisma.match.findFirst({
-      where: { id: Number(id) },
+      where: { id: Number(matchId) },
     });
     return res.status(StatusCodes.OK).json({ match });
   }
@@ -70,13 +70,13 @@ const createMatch = asyncWrapper(
 
 const updateMatch = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { matchId } = req.params;
     const { homeTeamId, awayTeamId, competitionId, seasonId } = req.body;
 
     // Validating the data passed through the request
     try {
       await updateMatchSchema({
-        id,
+        id: matchId,
         homeTeamId,
         awayTeamId,
         competitionId,
@@ -93,7 +93,7 @@ const updateMatch = asyncWrapper(
 
     // Updating the match and responding
     const match = await prisma.match.update({
-      where: { id: Number(id) },
+      where: { id: Number(matchId) },
       data: { homeTeamId, awayTeamId, competitionId, seasonId },
     });
     return res.status(StatusCodes.OK).json({ match });
@@ -102,11 +102,11 @@ const updateMatch = asyncWrapper(
 
 const deleteMatch = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { matchId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getMatchSchema({ id });
+      await getMatchSchema({ id: matchId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -114,7 +114,7 @@ const deleteMatch = asyncWrapper(
 
     // Deleting the match from the database and responding
     const match = await prisma.match.delete({
-      where: { id: Number(id) },
+      where: { id: Number(matchId) },
     });
     return res.status(StatusCodes.OK).json({ match });
   }

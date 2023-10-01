@@ -21,11 +21,11 @@ const getAllPositions = asyncWrapper(
 
 const getSpecificPosition = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { positionId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getPositionSchema({ id });
+      await getPositionSchema({ id: positionId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -33,7 +33,7 @@ const getSpecificPosition = asyncWrapper(
 
     // Getting the position and responding
     const position = await prisma.position.findFirst({
-      where: { id: Number(id) },
+      where: { id: Number(positionId) },
     });
     return res.status(StatusCodes.OK).json({ position });
   }
@@ -65,12 +65,12 @@ const createPosition = asyncWrapper(
 
 const updatePosition = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { positionId } = req.params;
     const { name } = req.body;
 
     // Validating the data passed through the request
     try {
-      await updatePositionSchema({ id, name });
+      await updatePositionSchema({ id: positionId, name });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
 
@@ -82,7 +82,7 @@ const updatePosition = asyncWrapper(
 
     // Creating the position and responding
     const position = await prisma.position.update({
-      where: { id: Number(id) },
+      where: { id: Number(positionId) },
       data: { name },
     });
     return res.status(StatusCodes.OK).json({ position });
@@ -91,11 +91,11 @@ const updatePosition = asyncWrapper(
 
 const deletePosition = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { positionId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getPositionSchema({ id });
+      await getPositionSchema({ id: positionId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -103,7 +103,7 @@ const deletePosition = asyncWrapper(
 
     // Deleting the position from the database and responding
     const position = await prisma.position.delete({
-      where: { id: Number(id) },
+      where: { id: Number(positionId) },
     });
     return res.status(StatusCodes.OK).json({ position });
   }

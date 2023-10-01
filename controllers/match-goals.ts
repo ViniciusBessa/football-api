@@ -25,11 +25,11 @@ const getAllMatchGoals = asyncWrapper(
 
 const getSpecificMatchGoal = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { goalId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getMatchGoalSchema({ id });
+      await getMatchGoalSchema({ id: goalId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -37,7 +37,7 @@ const getSpecificMatchGoal = asyncWrapper(
 
     // Getting the match goal and responding
     const matchGoal = await prisma.matchGoals.findFirst({
-      where: { id: Number(id) },
+      where: { id: Number(goalId) },
     });
     return res.status(StatusCodes.OK).json({ matchGoal });
   }
@@ -85,14 +85,14 @@ const createMatchGoal = asyncWrapper(
 
 const updateMatchGoal = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { matchId, id } = req.params;
+    const { matchId, goalId } = req.params;
     const { teamId, goalscorerId, assistantId, isOwnGoal, goalTimestamp } =
       req.body;
 
     // Validating the data passed through the request
     try {
       await updateMatchGoalSchema({
-        id,
+        id: goalId,
         matchId,
         teamId,
         goalscorerId,
@@ -111,7 +111,7 @@ const updateMatchGoal = asyncWrapper(
 
     // Updating the match goal and responding
     const matchGoal = await prisma.matchGoals.update({
-      where: { id: Number(id) },
+      where: { id: Number(goalId) },
       data: {
         matchId: Number(matchId),
         teamId,
@@ -127,11 +127,11 @@ const updateMatchGoal = asyncWrapper(
 
 const deleteMatchGoal = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { goalId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getMatchGoalSchema({ id });
+      await getMatchGoalSchema({ id: goalId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -139,7 +139,7 @@ const deleteMatchGoal = asyncWrapper(
 
     // Deleting the matchgoal from the database and responding
     const matchgoal = await prisma.matchGoals.delete({
-      where: { id: Number(id) },
+      where: { id: Number(goalId) },
     });
     return res.status(StatusCodes.OK).json({ matchgoal });
   }

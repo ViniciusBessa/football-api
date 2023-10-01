@@ -21,11 +21,11 @@ const getAllCompetitions = asyncWrapper(
 
 const getSpecificCompetition = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { competitionId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getCompetitionSchema({ id });
+      await getCompetitionSchema({ id: competitionId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -33,7 +33,7 @@ const getSpecificCompetition = asyncWrapper(
 
     // Getting the competition and responding
     const competition = await prisma.competition.findFirst({
-      where: { id: Number(id) },
+      where: { id: Number(competitionId) },
     });
     return res.status(StatusCodes.OK).json({ competition });
   }
@@ -65,12 +65,18 @@ const createCompetition = asyncWrapper(
 
 const updateCompetition = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { competitionId } = req.params;
     const { name, code, logoUrl, type } = req.body;
 
     // Validating the data passed through the request
     try {
-      await updateCompetitionSchema({ id, name, code, logoUrl, type });
+      await updateCompetitionSchema({
+        id: competitionId,
+        name,
+        code,
+        logoUrl,
+        type,
+      });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
 
@@ -82,7 +88,7 @@ const updateCompetition = asyncWrapper(
 
     // Updating the competition and responding
     const competition = await prisma.competition.update({
-      where: { id: Number(id) },
+      where: { id: Number(competitionId) },
       data: { name, code, logoUrl, type },
     });
     return res.status(StatusCodes.OK).json({ competition });
@@ -91,11 +97,11 @@ const updateCompetition = asyncWrapper(
 
 const deleteCompetition = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { competitionId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getCompetitionSchema({ id });
+      await getCompetitionSchema({ id: competitionId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -103,7 +109,7 @@ const deleteCompetition = asyncWrapper(
 
     // Deleting the competition from the database and responding
     const competition = await prisma.competition.delete({
-      where: { id: Number(id) },
+      where: { id: Number(competitionId) },
     });
     return res.status(StatusCodes.OK).json({ competition });
   }

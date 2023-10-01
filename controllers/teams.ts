@@ -21,11 +21,11 @@ const getAllTeams = asyncWrapper(
 
 const getSpecificTeam = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { teamId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getTeamSchema({ id });
+      await getTeamSchema({ id: teamId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -33,7 +33,7 @@ const getSpecificTeam = asyncWrapper(
 
     // Getting the team and responding
     const team = await prisma.team.findFirst({
-      where: { id: Number(id) },
+      where: { id: Number(teamId) },
     });
     return res.status(StatusCodes.OK).json({ team });
   }
@@ -73,14 +73,14 @@ const createTeam = asyncWrapper(
 
 const updateTeam = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { teamId } = req.params;
     const { name, code, foundingYear, logoUrl, isNational, countryId } =
       req.body;
 
     // Validating the data passed through the request
     try {
       await updateTeamSchema({
-        id,
+        id: teamId,
         name,
         code,
         foundingYear,
@@ -99,7 +99,7 @@ const updateTeam = asyncWrapper(
 
     // Updating the team and responding
     const team = await prisma.team.update({
-      where: { id: Number(id) },
+      where: { id: Number(teamId) },
       data: { name, code, foundingYear, logoUrl, isNational, countryId },
     });
     return res.status(StatusCodes.OK).json({ team });
@@ -108,11 +108,11 @@ const updateTeam = asyncWrapper(
 
 const deleteTeam = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { teamId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getTeamSchema({ id });
+      await getTeamSchema({ id: teamId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -120,7 +120,7 @@ const deleteTeam = asyncWrapper(
 
     // Deleting the team from the database and responding
     const team = await prisma.team.delete({
-      where: { id: Number(id) },
+      where: { id: Number(teamId) },
     });
     return res.status(StatusCodes.OK).json({ team });
   }

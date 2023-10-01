@@ -21,11 +21,11 @@ const getAllTransfers = asyncWrapper(
 
 const getSpecificTransfer = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { transferId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getTransferSchema({ id });
+      await getTransferSchema({ id: transferId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -33,7 +33,7 @@ const getSpecificTransfer = asyncWrapper(
 
     // Getting the transfer and responding
     const transfer = await prisma.transfer.findFirst({
-      where: { id: Number(id) },
+      where: { id: Number(transferId) },
     });
     return res.status(StatusCodes.OK).json({ transfer });
   }
@@ -71,13 +71,13 @@ const createTransfer = asyncWrapper(
 
 const updateTransfer = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { transferId } = req.params;
     const { playerId, previousTeamId, newTeamId, transferFee, date } = req.body;
 
     // Validating the data passed through the request
     try {
       await updateTransferSchema({
-        id,
+        id: transferId,
         playerId,
         previousTeamId,
         newTeamId,
@@ -95,7 +95,7 @@ const updateTransfer = asyncWrapper(
 
     // Updating the transfer and responding
     const transfer = await prisma.transfer.update({
-      where: { id: Number(id) },
+      where: { id: Number(transferId) },
       data: { playerId, previousTeamId, newTeamId, transferFee, date },
     });
     return res.status(StatusCodes.OK).json({ transfer });
@@ -104,11 +104,11 @@ const updateTransfer = asyncWrapper(
 
 const deleteTransfer = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { transferId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getTransferSchema({ id });
+      await getTransferSchema({ id: transferId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -116,7 +116,7 @@ const deleteTransfer = asyncWrapper(
 
     // Deleting the transfer from the database and responding
     const transfer = await prisma.transfer.delete({
-      where: { id: Number(id) },
+      where: { id: Number(transferId) },
     });
     return res.status(StatusCodes.OK).json({ transfer });
   }

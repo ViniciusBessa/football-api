@@ -21,11 +21,11 @@ const getAllPlayers = asyncWrapper(
 
 const getSpecificPlayer = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { playerId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getPlayerSchema({ id });
+      await getPlayerSchema({ id: playerId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -33,7 +33,7 @@ const getSpecificPlayer = asyncWrapper(
 
     // Getting the player and responding
     const player = await prisma.player.findFirst({
-      where: { id: Number(id) },
+      where: { id: Number(playerId) },
     });
     return res.status(StatusCodes.OK).json({ player });
   }
@@ -89,7 +89,7 @@ const createPlayer = asyncWrapper(
 
 const updatePlayer = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { playerId } = req.params;
     const {
       name,
       dateOfBirth,
@@ -103,7 +103,7 @@ const updatePlayer = asyncWrapper(
     // Validating the data passed through the request
     try {
       await updatePlayerSchema({
-        id,
+        id: playerId,
         name,
         dateOfBirth,
         height,
@@ -123,7 +123,7 @@ const updatePlayer = asyncWrapper(
 
     // Updating the player and responding
     const player = await prisma.player.update({
-      where: { id: Number(id) },
+      where: { id: Number(playerId) },
       data: {
         name,
         dateOfBirth,
@@ -140,11 +140,11 @@ const updatePlayer = asyncWrapper(
 
 const deletePlayer = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { playerId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getPlayerSchema({ id });
+      await getPlayerSchema({ id: playerId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -152,7 +152,7 @@ const deletePlayer = asyncWrapper(
 
     // Deleting the player from the database and responding
     const player = await prisma.player.delete({
-      where: { id: Number(id) },
+      where: { id: Number(playerId) },
     });
     return res.status(StatusCodes.OK).json({ player });
   }

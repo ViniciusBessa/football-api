@@ -21,11 +21,11 @@ const getAllCountries = asyncWrapper(
 
 const getSpecificCountry = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { countryId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getCountrySchema({ id });
+      await getCountrySchema({ id: countryId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -33,7 +33,7 @@ const getSpecificCountry = asyncWrapper(
 
     // Getting the country and responding
     const country = await prisma.country.findFirst({
-      where: { id: Number(id) },
+      where: { id: Number(countryId) },
     });
     return res.status(StatusCodes.OK).json({ country });
   }
@@ -65,12 +65,12 @@ const createCountry = asyncWrapper(
 
 const updateCountry = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { countryId } = req.params;
     const { name, code, flagUrl } = req.body;
 
     // Validating the data passed through the request
     try {
-      await updateCountrySchema({ id, name, code, flagUrl });
+      await updateCountrySchema({ id: countryId, name, code, flagUrl });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
 
@@ -82,7 +82,7 @@ const updateCountry = asyncWrapper(
 
     // Updating the country and responding
     const country = await prisma.country.update({
-      where: { id: Number(id) },
+      where: { id: Number(countryId) },
       data: { name, code, flagUrl },
     });
     return res.status(StatusCodes.OK).json({ country });
@@ -91,11 +91,11 @@ const updateCountry = asyncWrapper(
 
 const deleteCountry = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { countryId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getCountrySchema({ id });
+      await getCountrySchema({ id: countryId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -103,7 +103,7 @@ const deleteCountry = asyncWrapper(
 
     // Deleting the country from the database and responding
     const country = await prisma.country.delete({
-      where: { id: Number(id) },
+      where: { id: Number(countryId) },
     });
     return res.status(StatusCodes.OK).json({ country });
   }

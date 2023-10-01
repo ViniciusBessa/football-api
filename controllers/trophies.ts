@@ -21,11 +21,11 @@ const getAllTrophies = asyncWrapper(
 
 const getSpecificTrophy = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { trophyId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getTrophySchema({ id });
+      await getTrophySchema({ id: trophyId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -33,7 +33,7 @@ const getSpecificTrophy = asyncWrapper(
 
     // Getting the trophy and responding
     const trophy = await prisma.trophy.findFirst({
-      where: { id: Number(id) },
+      where: { id: Number(trophyId) },
     });
     return res.status(StatusCodes.OK).json({ trophy });
   }
@@ -65,12 +65,17 @@ const createTrophy = asyncWrapper(
 
 const updateTrophy = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { trophyId } = req.params;
     const { competitionId, seasonId, teamId } = req.body;
 
     // Validating the data passed through the request
     try {
-      await updateTrophySchema({ id, competitionId, seasonId, teamId });
+      await updateTrophySchema({
+        id: trophyId,
+        competitionId,
+        seasonId,
+        teamId,
+      });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
 
@@ -82,7 +87,7 @@ const updateTrophy = asyncWrapper(
 
     // Updating the trophy and responding
     const trophy = await prisma.trophy.update({
-      where: { id: Number(id) },
+      where: { id: Number(trophyId) },
       data: { competitionId, seasonId, teamId },
     });
     return res.status(StatusCodes.OK).json({ trophy });
@@ -91,11 +96,11 @@ const updateTrophy = asyncWrapper(
 
 const deleteTrophy = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { trophyId } = req.params;
 
     // Validating the id passed through the parameters
     try {
-      await getTrophySchema({ id });
+      await getTrophySchema({ id: trophyId });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
       throw new NotFoundError(errorMessage);
@@ -103,7 +108,7 @@ const deleteTrophy = asyncWrapper(
 
     // Deleting the trophy from the database and responding
     const trophy = await prisma.trophy.delete({
-      where: { id: Number(id) },
+      where: { id: Number(trophyId) },
     });
     return res.status(StatusCodes.OK).json({ trophy });
   }

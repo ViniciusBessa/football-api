@@ -41,8 +41,26 @@ app.use(authMiddleware);
 
 // Routes
 import authRouter from './routes/auth';
+import competitionRouter from './routes/competitions';
+import countryRouter from './routes/countries';
+import matchRouter from './routes/matches';
+import playerRouter from './routes/players';
+import positionRouter from './routes/positions';
+import seasonRouter from './routes/seasons';
+import teamRouter from './routes/teams';
+import transferRouter from './routes/transfers';
+import trophyRouter from './routes/trophies';
 
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/competitions', competitionRouter);
+app.use('/api/v1/countries', countryRouter);
+app.use('/api/v1/matches', matchRouter);
+app.use('/api/v1/players', playerRouter);
+app.use('/api/v1/positions', positionRouter);
+app.use('/api/v1/seasons', seasonRouter);
+app.use('/api/v1/teams', teamRouter);
+app.use('/api/v1/transfers', transferRouter);
+app.use('/api/v1/trophies', trophyRouter);
 
 // Error handler and page not found middlewares
 import notFoundMiddleware from './middlewares/not-found';
