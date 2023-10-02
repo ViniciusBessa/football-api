@@ -58,7 +58,6 @@ const prisma = new PrismaClient();
 ajv.addKeyword({
   keyword: 'nameIsAvailable',
   async: true,
-  type: 'string',
   schema: false,
   validate: nameIsAvailable,
 });
@@ -66,7 +65,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'positionExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: positionExists,
 });
@@ -74,7 +72,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'countryExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: countryExists,
 });
@@ -82,7 +79,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'teamExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: teamExists,
 });
@@ -90,7 +86,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'playerExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: playerExists,
 });
@@ -102,9 +97,9 @@ async function nameIsAvailable(name: string): Promise<boolean> {
   return players.length === 0;
 }
 
-async function playerExists(playerId: number): Promise<boolean> {
+async function playerExists(playerId: string | number): Promise<boolean> {
   const player = await prisma.player.findFirst({
-    where: { id: playerId },
+    where: { id: Number(playerId) },
   });
   return !!player;
 }
@@ -113,31 +108,14 @@ async function playerExists(playerId: number): Promise<boolean> {
 const createPlayerSchema = ajv.compile<CreatePlayerInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: [
-        'name',
-        'dateOfBirth',
-        'height',
-        'weight',
-        'positionId',
-        'countryId',
-        'currentTeamId',
-      ],
-
-      errorMessage: {
-        required: {
-          name: PLAYER_MESSAGES.NAME_REQUIRED,
-          dateOfBirth: PLAYER_MESSAGES.DATE_OF_BIRTH_REQUIRED,
-          height: PLAYER_MESSAGES.HEIGHT_REQUIRED,
-          weight: PLAYER_MESSAGES.WEIGHT_REQUIRED,
-          positionId: PLAYER_MESSAGES.POSITION_ID_REQUIRED,
-          countryId: PLAYER_MESSAGES.COUNTRY_ID_REQUIRED,
-          currentTeamId: PLAYER_MESSAGES.CURRENT_TEAM_ID_REQUIRED,
-        },
-      },
-    },
+  required: [
+    'name',
+    'dateOfBirth',
+    'height',
+    'weight',
+    'positionId',
+    'countryId',
+    'currentTeamId',
   ],
 
   properties: {
@@ -156,7 +134,7 @@ const createPlayerSchema = ajv.compile<CreatePlayerInput>({
     },
 
     dateOfBirth: {
-      type: 'date',
+      type: 'object',
 
       errorMessage: {
         type: PLAYER_MESSAGES.DATE_OF_BIRTH_TYPE,
@@ -165,30 +143,30 @@ const createPlayerSchema = ajv.compile<CreatePlayerInput>({
 
     height: {
       type: 'number',
-      min: HEIGHT_MIN,
-      max: HEIGHT_MAX,
+      minimum: HEIGHT_MIN,
+      maximum: HEIGHT_MAX,
 
       errorMessage: {
         type: PLAYER_MESSAGES.HEIGHT_TYPE,
-        min: PLAYER_MESSAGES.HEIGHT_MIN,
-        max: PLAYER_MESSAGES.HEIGHT_MAX,
+        minimum: PLAYER_MESSAGES.HEIGHT_MIN,
+        maximum: PLAYER_MESSAGES.HEIGHT_MAX,
       },
     },
 
     weight: {
       type: 'number',
-      min: WEIGHT_MIN,
-      max: WEIGHT_MAX,
+      minimum: WEIGHT_MIN,
+      maximum: WEIGHT_MAX,
 
       errorMessage: {
         type: PLAYER_MESSAGES.WEIGHT_TYPE,
-        min: PLAYER_MESSAGES.WEIGHT_MIN,
-        max: PLAYER_MESSAGES.WEIGHT_MAX,
+        minimum: PLAYER_MESSAGES.WEIGHT_MIN,
+        maximum: PLAYER_MESSAGES.WEIGHT_MAX,
       },
     },
 
     positionId: {
-      type: ['string', 'number'],
+      type: 'number',
       positionExists: true,
 
       errorMessage: {
@@ -198,7 +176,7 @@ const createPlayerSchema = ajv.compile<CreatePlayerInput>({
     },
 
     countryId: {
-      type: ['string', 'number'],
+      type: 'number',
       countryExists: true,
 
       errorMessage: {
@@ -208,7 +186,7 @@ const createPlayerSchema = ajv.compile<CreatePlayerInput>({
     },
 
     teamId: {
-      type: ['string', 'number'],
+      type: 'number',
       teamExists: true,
 
       errorMessage: {
@@ -220,6 +198,15 @@ const createPlayerSchema = ajv.compile<CreatePlayerInput>({
 
   errorMessage: {
     type: PLAYER_MESSAGES.OBJECT_TYPE,
+    required: {
+      name: PLAYER_MESSAGES.NAME_REQUIRED,
+      dateOfBirth: PLAYER_MESSAGES.DATE_OF_BIRTH_REQUIRED,
+      height: PLAYER_MESSAGES.HEIGHT_REQUIRED,
+      weight: PLAYER_MESSAGES.WEIGHT_REQUIRED,
+      positionId: PLAYER_MESSAGES.POSITION_ID_REQUIRED,
+      countryId: PLAYER_MESSAGES.COUNTRY_ID_REQUIRED,
+      currentTeamId: PLAYER_MESSAGES.CURRENT_TEAM_ID_REQUIRED,
+    },
   },
 });
 
@@ -227,21 +214,11 @@ const createPlayerSchema = ajv.compile<CreatePlayerInput>({
 const updatePlayerSchema = ajv.compile<UpdatePlayerInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: PLAYER_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       playerExists: true,
 
       errorMessage: {
@@ -265,7 +242,7 @@ const updatePlayerSchema = ajv.compile<UpdatePlayerInput>({
     },
 
     dateOfBirth: {
-      type: 'date',
+      type: 'object',
 
       errorMessage: {
         type: PLAYER_MESSAGES.DATE_OF_BIRTH_TYPE,
@@ -274,30 +251,30 @@ const updatePlayerSchema = ajv.compile<UpdatePlayerInput>({
 
     height: {
       type: 'number',
-      min: HEIGHT_MIN,
-      max: HEIGHT_MAX,
+      minimum: HEIGHT_MIN,
+      maximum: HEIGHT_MAX,
 
       errorMessage: {
         type: PLAYER_MESSAGES.HEIGHT_TYPE,
-        min: PLAYER_MESSAGES.HEIGHT_MIN,
-        max: PLAYER_MESSAGES.HEIGHT_MAX,
+        minimum: PLAYER_MESSAGES.HEIGHT_MIN,
+        maximum: PLAYER_MESSAGES.HEIGHT_MAX,
       },
     },
 
     weight: {
       type: 'number',
-      min: WEIGHT_MIN,
-      max: WEIGHT_MAX,
+      minimum: WEIGHT_MIN,
+      maximum: WEIGHT_MAX,
 
       errorMessage: {
         type: PLAYER_MESSAGES.WEIGHT_TYPE,
-        min: PLAYER_MESSAGES.WEIGHT_MIN,
-        max: PLAYER_MESSAGES.WEIGHT_MAX,
+        minimum: PLAYER_MESSAGES.WEIGHT_MIN,
+        maximum: PLAYER_MESSAGES.WEIGHT_MAX,
       },
     },
 
     positionId: {
-      type: ['string', 'number'],
+      type: 'number',
       positionExists: true,
 
       errorMessage: {
@@ -307,7 +284,7 @@ const updatePlayerSchema = ajv.compile<UpdatePlayerInput>({
     },
 
     countryId: {
-      type: ['string', 'number'],
+      type: 'number',
       countryExists: true,
 
       errorMessage: {
@@ -317,7 +294,7 @@ const updatePlayerSchema = ajv.compile<UpdatePlayerInput>({
     },
 
     teamId: {
-      type: ['string', 'number'],
+      type: 'number',
       teamExists: true,
 
       errorMessage: {
@@ -329,6 +306,9 @@ const updatePlayerSchema = ajv.compile<UpdatePlayerInput>({
 
   errorMessage: {
     type: PLAYER_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: PLAYER_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 
@@ -336,21 +316,11 @@ const updatePlayerSchema = ajv.compile<UpdatePlayerInput>({
 const getPlayerSchema = ajv.compile<GetPlayerInput>({
   type: 'object',
   $async: true,
-
-  allof: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: PLAYER_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       playerExists: true,
 
       errorMessage: {
@@ -362,6 +332,9 @@ const getPlayerSchema = ajv.compile<GetPlayerInput>({
 
   errorMessage: {
     type: PLAYER_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: PLAYER_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 

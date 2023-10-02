@@ -37,7 +37,6 @@ const prisma = new PrismaClient();
 ajv.addKeyword({
   keyword: 'yearIsAvailable',
   async: true,
-  type: 'string',
   schema: false,
   validate: yearIsAvailable,
 });
@@ -45,7 +44,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'seasonExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: seasonExists,
 });
@@ -57,9 +55,9 @@ async function yearIsAvailable(year: number): Promise<boolean> {
   return seasons.length === 0;
 }
 
-async function seasonExists(seasonId: number): Promise<boolean> {
+async function seasonExists(seasonId: string | number): Promise<boolean> {
   const season = await prisma.season.findFirst({
-    where: { id: seasonId },
+    where: { id: Number(seasonId) },
   });
   return !!season;
 }
@@ -68,37 +66,25 @@ async function seasonExists(seasonId: number): Promise<boolean> {
 const createSeasonSchema = ajv.compile<CreateSeasonInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['year', 'start', 'end'],
-      errorMessage: {
-        required: {
-          year: SEASON_MESSAGES.YEAR_REQUIRED,
-          start: SEASON_MESSAGES.START_REQUIRED,
-          end: SEASON_MESSAGES.END_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['year', 'start', 'end'],
 
   properties: {
     year: {
       type: 'integer',
-      min: YEAR_MIN,
-      max: YEAR_MAX,
+      minimum: YEAR_MIN,
+      maximum: YEAR_MAX,
       yearIsAvailable: true,
 
       errorMessage: {
         type: SEASON_MESSAGES.YEAR_TYPE,
-        min: SEASON_MESSAGES.YEAR_MIN,
-        max: SEASON_MESSAGES.YEAR_MAX,
+        minimum: SEASON_MESSAGES.YEAR_MIN,
+        maximum: SEASON_MESSAGES.YEAR_MAX,
         yearIsAvailable: SEASON_MESSAGES.YEAR_IN_USE,
       },
     },
 
     start: {
-      type: 'date',
+      type: 'object',
 
       errorMessage: {
         type: SEASON_MESSAGES.START_TYPE,
@@ -106,7 +92,7 @@ const createSeasonSchema = ajv.compile<CreateSeasonInput>({
     },
 
     end: {
-      type: 'end',
+      type: 'object',
 
       errorMessage: {
         type: SEASON_MESSAGES.END_TYPE,
@@ -124,6 +110,11 @@ const createSeasonSchema = ajv.compile<CreateSeasonInput>({
 
   errorMessage: {
     type: SEASON_MESSAGES.OBJECT_TYPE,
+    required: {
+      year: SEASON_MESSAGES.YEAR_REQUIRED,
+      start: SEASON_MESSAGES.START_REQUIRED,
+      end: SEASON_MESSAGES.END_REQUIRED,
+    },
   },
 });
 
@@ -131,21 +122,11 @@ const createSeasonSchema = ajv.compile<CreateSeasonInput>({
 const updateSeasonSchema = ajv.compile<UpdateSeasonInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: SEASON_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       seasonExists: true,
 
       errorMessage: {
@@ -156,20 +137,20 @@ const updateSeasonSchema = ajv.compile<UpdateSeasonInput>({
 
     year: {
       type: 'integer',
-      min: YEAR_MIN,
-      max: YEAR_MAX,
+      minimum: YEAR_MIN,
+      maximum: YEAR_MAX,
       yearIsAvailable: true,
 
       errorMessage: {
         type: SEASON_MESSAGES.YEAR_TYPE,
-        min: SEASON_MESSAGES.YEAR_MIN,
-        max: SEASON_MESSAGES.YEAR_MAX,
+        minimum: SEASON_MESSAGES.YEAR_MIN,
+        maximum: SEASON_MESSAGES.YEAR_MAX,
         yearIsAvailable: SEASON_MESSAGES.YEAR_IN_USE,
       },
     },
 
     start: {
-      type: 'date',
+      type: 'object',
 
       errorMessage: {
         type: SEASON_MESSAGES.START_TYPE,
@@ -177,7 +158,7 @@ const updateSeasonSchema = ajv.compile<UpdateSeasonInput>({
     },
 
     end: {
-      type: 'end',
+      type: 'object',
 
       errorMessage: {
         type: SEASON_MESSAGES.END_TYPE,
@@ -195,6 +176,9 @@ const updateSeasonSchema = ajv.compile<UpdateSeasonInput>({
 
   errorMessage: {
     type: SEASON_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: SEASON_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 
@@ -202,21 +186,11 @@ const updateSeasonSchema = ajv.compile<UpdateSeasonInput>({
 const getSeasonSchema = ajv.compile<GetSeasonInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: SEASON_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       seasonExists: true,
 
       errorMessage: {
@@ -228,6 +202,9 @@ const getSeasonSchema = ajv.compile<GetSeasonInput>({
 
   errorMessage: {
     type: SEASON_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: SEASON_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 

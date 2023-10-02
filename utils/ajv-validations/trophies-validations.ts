@@ -35,7 +35,6 @@ const prisma = new PrismaClient();
 ajv.addKeyword({
   keyword: 'competitionExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: competitionExists,
 });
@@ -43,7 +42,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'seasonExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: seasonExists,
 });
@@ -51,7 +49,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'teamExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: teamExists,
 });
@@ -59,14 +56,13 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'trophyExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: trophyExists,
 });
 
-async function trophyExists(trophyId: number): Promise<boolean> {
+async function trophyExists(trophyId: string | number): Promise<boolean> {
   const trophy = await prisma.trophy.findFirst({
-    where: { id: trophyId },
+    where: { id: Number(trophyId) },
   });
   return !!trophy;
 }
@@ -75,21 +71,11 @@ async function trophyExists(trophyId: number): Promise<boolean> {
 const createTrophySchema = ajv.compile<CreateTrophyInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['competitionId', 'seasonId', 'teamId'],
-      errorMessage: {
-        competitionId: TROPHY_MESSAGES.COMPETITION_ID_REQUIRED,
-        seasonId: TROPHY_MESSAGES.SEASON_ID_REQUIRED,
-        teamId: TROPHY_MESSAGES.TEAM_ID_REQUIRED,
-      },
-    },
-  ],
+  required: ['competitionId', 'seasonId', 'teamId'],
 
   properties: {
     competitionId: {
-      type: ['string', 'number'],
+      type: 'number',
       competitionExists: true,
 
       errorMessage: {
@@ -99,7 +85,7 @@ const createTrophySchema = ajv.compile<CreateTrophyInput>({
     },
 
     seasonId: {
-      type: ['string', 'number'],
+      type: 'number',
       seasonExists: true,
 
       errorMessage: {
@@ -109,7 +95,7 @@ const createTrophySchema = ajv.compile<CreateTrophyInput>({
     },
 
     teamId: {
-      type: ['string', 'number'],
+      type: 'number',
       teamExists: true,
 
       errorMessage: {
@@ -121,6 +107,11 @@ const createTrophySchema = ajv.compile<CreateTrophyInput>({
 
   errorMessage: {
     type: TROPHY_MESSAGES.OBJECT_TYPE,
+    required: {
+      competitionId: TROPHY_MESSAGES.COMPETITION_ID_REQUIRED,
+      seasonId: TROPHY_MESSAGES.SEASON_ID_REQUIRED,
+      teamId: TROPHY_MESSAGES.TEAM_ID_REQUIRED,
+    },
   },
 });
 
@@ -128,19 +119,11 @@ const createTrophySchema = ajv.compile<CreateTrophyInput>({
 const updateTrophySchema = ajv.compile<UpdateTrophyInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        id: TROPHY_MESSAGES.ID_REQUIRED,
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       trophyExists: true,
 
       errorMessage: {
@@ -150,7 +133,7 @@ const updateTrophySchema = ajv.compile<UpdateTrophyInput>({
     },
 
     competitionId: {
-      type: ['string', 'number'],
+      type: 'number',
       competitionExists: true,
 
       errorMessage: {
@@ -160,7 +143,7 @@ const updateTrophySchema = ajv.compile<UpdateTrophyInput>({
     },
 
     seasonId: {
-      type: ['string', 'number'],
+      type: 'number',
       seasonExists: true,
 
       errorMessage: {
@@ -170,7 +153,7 @@ const updateTrophySchema = ajv.compile<UpdateTrophyInput>({
     },
 
     teamId: {
-      type: ['string', 'number'],
+      type: 'number',
       teamExists: true,
 
       errorMessage: {
@@ -182,6 +165,9 @@ const updateTrophySchema = ajv.compile<UpdateTrophyInput>({
 
   errorMessage: {
     type: TROPHY_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: TROPHY_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 
@@ -189,19 +175,11 @@ const updateTrophySchema = ajv.compile<UpdateTrophyInput>({
 const getTrophySchema = ajv.compile<GetTrophyInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        id: TROPHY_MESSAGES.ID_REQUIRED,
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       trophyExists: true,
 
       errorMessage: {
@@ -213,6 +191,9 @@ const getTrophySchema = ajv.compile<GetTrophyInput>({
 
   errorMessage: {
     type: TROPHY_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: TROPHY_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 

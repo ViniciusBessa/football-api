@@ -41,7 +41,6 @@ const prisma = new PrismaClient();
 ajv.addKeyword({
   keyword: 'nameIsAvailable',
   async: true,
-  type: 'string',
   schema: false,
   validate: nameIsAvailable,
 });
@@ -49,7 +48,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'codeIsAvailable',
   async: true,
-  type: 'string',
   schema: false,
   validate: codeIsAvailable,
 });
@@ -57,7 +55,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'competitionExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: competitionExists,
 });
@@ -76,9 +73,11 @@ async function codeIsAvailable(code: string): Promise<boolean> {
   return competitions.length === 0;
 }
 
-async function competitionExists(competitionId: number): Promise<boolean> {
+async function competitionExists(
+  competitionId: string | number
+): Promise<boolean> {
   const competition = await prisma.competition.findFirst({
-    where: { id: competitionId },
+    where: { id: Number(competitionId) },
   });
   return !!competition;
 }
@@ -87,20 +86,7 @@ async function competitionExists(competitionId: number): Promise<boolean> {
 const createCompetitionSchema = ajv.compile<CreateCompetitionInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['name', 'code', 'logoUrl', 'type'],
-      errorMessage: {
-        required: {
-          name: COMPETITION_MESSAGES.NAME_REQUIRED,
-          code: COMPETITION_MESSAGES.CODE_REQUIRED,
-          logoUrl: COMPETITION_MESSAGES.LOGO_URL_REQUIRED,
-          type: COMPETITION_MESSAGES.TYPE_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['name', 'code', 'logoUrl', 'type'],
 
   properties: {
     name: {
@@ -150,6 +136,12 @@ const createCompetitionSchema = ajv.compile<CreateCompetitionInput>({
 
   errorMessage: {
     type: COMPETITION_MESSAGES.OBJECT_TYPE,
+    required: {
+      name: COMPETITION_MESSAGES.NAME_REQUIRED,
+      code: COMPETITION_MESSAGES.CODE_REQUIRED,
+      logoUrl: COMPETITION_MESSAGES.LOGO_URL_REQUIRED,
+      type: COMPETITION_MESSAGES.TYPE_REQUIRED,
+    },
   },
 });
 
@@ -157,21 +149,11 @@ const createCompetitionSchema = ajv.compile<CreateCompetitionInput>({
 const updateCompetitionSchema = ajv.compile<UpdateCompetitionInput>({
   type: 'object',
   $async: true,
-
-  allof: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: COMPETITION_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       competitionExists: true,
 
       errorMessage: {
@@ -226,6 +208,9 @@ const updateCompetitionSchema = ajv.compile<UpdateCompetitionInput>({
 
   errorMessage: {
     type: COMPETITION_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: COMPETITION_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 
@@ -233,21 +218,11 @@ const updateCompetitionSchema = ajv.compile<UpdateCompetitionInput>({
 const getCompetitionSchema = ajv.compile<GetCompetitionInput>({
   type: 'object',
   $async: true,
-
-  allof: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: COMPETITION_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       competitionExists: true,
 
       errorMessage: {
@@ -259,6 +234,9 @@ const getCompetitionSchema = ajv.compile<GetCompetitionInput>({
 
   errorMessage: {
     type: COMPETITION_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: COMPETITION_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 

@@ -167,7 +167,7 @@ describe('Auth Endpoints', () => {
       expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
       expect(response.body.user).toBeFalsy();
       expect(response.body.token).toBeFalsy();
-      expect(response.body.err).toEqual(USER_MESSAGES.NOT_FOUND);
+      expect(response.body.err).toEqual(USER_MESSAGES.NOT_FOUND_BY_EMAIL);
     });
 
     it('POST /api/v1/auth/login should fail to login by not providing an email', async () => {

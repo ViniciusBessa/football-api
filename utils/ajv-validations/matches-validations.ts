@@ -36,7 +36,6 @@ const prisma = new PrismaClient();
 ajv.addKeyword({
   keyword: 'competitionExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: competitionExists,
 });
@@ -44,7 +43,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'teamExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: teamExists,
 });
@@ -52,14 +50,13 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'matchExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: matchExists,
 });
 
-async function matchExists(matchId: number): Promise<boolean> {
+async function matchExists(matchId: string | number): Promise<boolean> {
   const match = await prisma.match.findFirst({
-    where: { id: matchId },
+    where: { id: Number(matchId) },
   });
   return !!match;
 }
@@ -68,21 +65,11 @@ async function matchExists(matchId: number): Promise<boolean> {
 const createMatchSchema = ajv.compile<CreateMatchInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['competitionId', 'homeTeamId', 'awayTeamId'],
-      errorMessage: {
-        competitionId: MATCH_MESSAGES.COMPETITION_ID_REQUIRED,
-        homeTeamId: MATCH_MESSAGES.HOME_TEAM_ID_REQUIRED,
-        awayTeamId: MATCH_MESSAGES.AWAY_TEAM_ID_REQUIRED,
-      },
-    },
-  ],
+  required: ['competitionId', 'homeTeamId', 'awayTeamId'],
 
   properties: {
     competitionId: {
-      type: ['string', 'number'],
+      type: 'number',
       competitionExists: true,
 
       errorMessage: {
@@ -92,7 +79,7 @@ const createMatchSchema = ajv.compile<CreateMatchInput>({
     },
 
     homeTeamId: {
-      type: ['string', 'number'],
+      type: 'number',
       teamExists: true,
 
       errorMessage: {
@@ -102,7 +89,7 @@ const createMatchSchema = ajv.compile<CreateMatchInput>({
     },
 
     awayTeamId: {
-      type: ['string', 'number'],
+      type: 'number',
       teamExists: true,
 
       errorMessage: {
@@ -114,6 +101,11 @@ const createMatchSchema = ajv.compile<CreateMatchInput>({
 
   errorMessage: {
     type: MATCH_MESSAGES.OBJECT_TYPE,
+    required: {
+      competitionId: MATCH_MESSAGES.COMPETITION_ID_REQUIRED,
+      homeTeamId: MATCH_MESSAGES.HOME_TEAM_ID_REQUIRED,
+      awayTeamId: MATCH_MESSAGES.AWAY_TEAM_ID_REQUIRED,
+    },
   },
 });
 
@@ -121,19 +113,11 @@ const createMatchSchema = ajv.compile<CreateMatchInput>({
 const updateMatchSchema = ajv.compile<UpdateMatchInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        id: MATCH_MESSAGES.ID_REQUIRED,
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       matchExists: true,
 
       errorMessage: {
@@ -143,7 +127,7 @@ const updateMatchSchema = ajv.compile<UpdateMatchInput>({
     },
 
     competitionId: {
-      type: ['string', 'number'],
+      type: 'number',
       competitionExists: true,
 
       errorMessage: {
@@ -153,7 +137,7 @@ const updateMatchSchema = ajv.compile<UpdateMatchInput>({
     },
 
     homeTeamId: {
-      type: ['string', 'number'],
+      type: 'number',
       teamExists: true,
 
       errorMessage: {
@@ -163,7 +147,7 @@ const updateMatchSchema = ajv.compile<UpdateMatchInput>({
     },
 
     awayTeamId: {
-      type: ['string', 'number'],
+      type: 'number',
       teamExists: true,
 
       errorMessage: {
@@ -175,6 +159,9 @@ const updateMatchSchema = ajv.compile<UpdateMatchInput>({
 
   errorMessage: {
     type: MATCH_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: MATCH_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 
@@ -182,19 +169,11 @@ const updateMatchSchema = ajv.compile<UpdateMatchInput>({
 const getMatchSchema = ajv.compile<GetMatchInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        id: MATCH_MESSAGES.ID_REQUIRED,
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       matchExists: true,
 
       errorMessage: {
@@ -206,6 +185,9 @@ const getMatchSchema = ajv.compile<GetMatchInput>({
 
   errorMessage: {
     type: MATCH_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: MATCH_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 

@@ -66,7 +66,6 @@ const loginUser = asyncWrapper(
     // Getting the user payload and generating a token for authentication
     const userPayload = await getUserPayload(user);
     const token = await createToken(userPayload);
-
     return res.status(StatusCodes.OK).json({ user: userPayload, token });
   }
 );

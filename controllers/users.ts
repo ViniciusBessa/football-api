@@ -73,7 +73,11 @@ const updateUser = asyncWrapper(
       await updateUserSchema({ id: userId, name, email, password });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
-      throw new NotFoundError(errorMessage);
+
+      if (errorMessage.includes('was found')) {
+        throw new NotFoundError(errorMessage);
+      }
+      throw new BadRequestError(errorMessage);
     }
 
     // Encrypting the password if it was submitted
@@ -122,7 +126,7 @@ const deleteOwnAccount = asyncWrapper(
     const { password } = req.body;
 
     try {
-      await deleteOwnUserSchema({ id: user.id, password });
+      await deleteOwnUserSchema({ id: user.id.toString(), password });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
 

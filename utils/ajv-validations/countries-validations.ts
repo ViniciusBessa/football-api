@@ -39,7 +39,6 @@ const prisma = new PrismaClient();
 ajv.addKeyword({
   keyword: 'nameIsAvailable',
   async: true,
-  type: 'string',
   schema: false,
   validate: nameIsAvailable,
 });
@@ -47,7 +46,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'codeIsAvailable',
   async: true,
-  type: 'string',
   schema: false,
   validate: codeIsAvailable,
 });
@@ -55,7 +53,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'countryExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: countryExists,
 });
@@ -74,9 +71,9 @@ async function codeIsAvailable(code: string): Promise<boolean> {
   return countries.length === 0;
 }
 
-async function countryExists(countryId: number): Promise<boolean> {
+async function countryExists(countryId: string | number): Promise<boolean> {
   const country = await prisma.country.findFirst({
-    where: { id: countryId },
+    where: { id: Number(countryId) },
   });
   return !!country;
 }
@@ -85,19 +82,7 @@ async function countryExists(countryId: number): Promise<boolean> {
 const createCountrySchema = ajv.compile<CreateCountryInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['name', 'code', 'flagUrl'],
-      errorMessage: {
-        required: {
-          name: COUNTRY_MESSAGES.NAME_REQUIRED,
-          code: COUNTRY_MESSAGES.CODE_REQUIRED,
-          flagUrl: COUNTRY_MESSAGES.FLAG_URL_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['name', 'code', 'flagUrl'],
 
   properties: {
     name: {
@@ -139,6 +124,11 @@ const createCountrySchema = ajv.compile<CreateCountryInput>({
 
   errorMessage: {
     type: COUNTRY_MESSAGES.OBJECT_TYPE,
+    required: {
+      name: COUNTRY_MESSAGES.NAME_REQUIRED,
+      code: COUNTRY_MESSAGES.CODE_REQUIRED,
+      flagUrl: COUNTRY_MESSAGES.FLAG_URL_REQUIRED,
+    },
   },
 });
 
@@ -146,21 +136,11 @@ const createCountrySchema = ajv.compile<CreateCountryInput>({
 const updateCountrySchema = ajv.compile<UpdateCountryInput>({
   type: 'object',
   $async: true,
-
-  allof: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: COUNTRY_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       countryExists: true,
 
       errorMessage: {
@@ -207,6 +187,9 @@ const updateCountrySchema = ajv.compile<UpdateCountryInput>({
 
   errorMessage: {
     type: COUNTRY_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: COUNTRY_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 
@@ -214,21 +197,11 @@ const updateCountrySchema = ajv.compile<UpdateCountryInput>({
 const getCountrySchema = ajv.compile<GetCountryInput>({
   type: 'object',
   $async: true,
-
-  allof: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: COUNTRY_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       countryExists: true,
 
       errorMessage: {
@@ -240,6 +213,9 @@ const getCountrySchema = ajv.compile<GetCountryInput>({
 
   errorMessage: {
     type: COUNTRY_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: COUNTRY_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 

@@ -46,7 +46,6 @@ const prisma = new PrismaClient();
 ajv.addKeyword({
   keyword: 'teamExists',
   async: true,
-  type: 'string',
   schema: false,
   validate: teamExists,
 });
@@ -54,7 +53,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'playerExists',
   async: true,
-  type: 'string',
   schema: false,
   validate: playerExists,
 });
@@ -62,14 +60,13 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'transferExists',
   async: true,
-  type: 'string',
   schema: false,
   validate: transferExists,
 });
 
-async function transferExists(transferId: number): Promise<boolean> {
+async function transferExists(transferId: string | number): Promise<boolean> {
   const transfer = await prisma.transfer.findFirst({
-    where: { id: transferId },
+    where: { id: Number(transferId) },
   });
   return !!transfer;
 }
@@ -78,32 +75,11 @@ async function transferExists(transferId: number): Promise<boolean> {
 const createTransferSchema = ajv.compile<CreateTransferInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: [
-        'playerId',
-        'previousTeamId',
-        'newTeamId',
-        'transferFee',
-        'date',
-      ],
-
-      errorMessage: {
-        required: {
-          playerId: TRANSFER_MESSAGES.PLAYER_ID_REQUIRED,
-          previousTeamId: TRANSFER_MESSAGES.PREVIOUS_TEAM_ID_REQUIRED,
-          newTeamId: TRANSFER_MESSAGES.NEW_TEAM_ID_REQUIRED,
-          transferFee: TRANSFER_MESSAGES.TRANSFER_FEE_REQUIRED,
-          date: TRANSFER_MESSAGES.DATE_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['playerId', 'previousTeamId', 'newTeamId', 'transferFee', 'date'],
 
   properties: {
     playerId: {
-      type: ['string', 'number'],
+      type: 'number',
       playerExists: true,
 
       errorMessage: {
@@ -113,7 +89,7 @@ const createTransferSchema = ajv.compile<CreateTransferInput>({
     },
 
     previousTeamId: {
-      type: ['string', 'number'],
+      type: 'number',
       teamExists: true,
 
       errorMessage: {
@@ -123,7 +99,7 @@ const createTransferSchema = ajv.compile<CreateTransferInput>({
     },
 
     newTeamId: {
-      type: ['string', 'number'],
+      type: 'number',
       teamExists: true,
 
       errorMessage: {
@@ -134,18 +110,18 @@ const createTransferSchema = ajv.compile<CreateTransferInput>({
 
     transferFee: {
       type: 'number',
-      min: TRANSFER_FEE_MIN,
-      max: TRANSFER_FEE_MAX,
+      minimum: TRANSFER_FEE_MIN,
+      maximum: TRANSFER_FEE_MAX,
 
       errorMessage: {
         type: TRANSFER_MESSAGES.TRANSFER_FEE_TYPE,
-        min: TRANSFER_MESSAGES.TRANSFER_FEE_MIN,
-        max: TRANSFER_MESSAGES.TRANSFER_FEE_MAX,
+        minimum: TRANSFER_MESSAGES.TRANSFER_FEE_MIN,
+        maximum: TRANSFER_MESSAGES.TRANSFER_FEE_MAX,
       },
     },
 
     date: {
-      type: 'date',
+      type: 'object',
 
       errorMessage: {
         type: TRANSFER_MESSAGES.DATE_TYPE,
@@ -155,6 +131,13 @@ const createTransferSchema = ajv.compile<CreateTransferInput>({
 
   errorMessage: {
     type: TRANSFER_MESSAGES.OBJECT_TYPE,
+    required: {
+      playerId: TRANSFER_MESSAGES.PLAYER_ID_REQUIRED,
+      previousTeamId: TRANSFER_MESSAGES.PREVIOUS_TEAM_ID_REQUIRED,
+      newTeamId: TRANSFER_MESSAGES.NEW_TEAM_ID_REQUIRED,
+      transferFee: TRANSFER_MESSAGES.TRANSFER_FEE_REQUIRED,
+      date: TRANSFER_MESSAGES.DATE_REQUIRED,
+    },
   },
 });
 
@@ -162,21 +145,11 @@ const createTransferSchema = ajv.compile<CreateTransferInput>({
 const updateTransferSchema = ajv.compile<UpdateTransferInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: TRANSFER_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       transferExists: true,
 
       errorMessage: {
@@ -185,61 +158,62 @@ const updateTransferSchema = ajv.compile<UpdateTransferInput>({
       },
     },
 
-    properties: {
-      playerId: {
-        type: ['string', 'number'],
-        playerExists: true,
+    playerId: {
+      type: 'number',
+      playerExists: true,
 
-        errorMessage: {
-          type: TRANSFER_MESSAGES.PLAYER_ID_TYPE,
-          playerExists: TRANSFER_MESSAGES.PLAYER_NOT_FOUND,
-        },
+      errorMessage: {
+        type: TRANSFER_MESSAGES.PLAYER_ID_TYPE,
+        playerExists: TRANSFER_MESSAGES.PLAYER_NOT_FOUND,
       },
+    },
 
-      previousTeamId: {
-        type: ['string', 'number'],
-        teamExists: true,
+    previousTeamId: {
+      type: 'number',
+      teamExists: true,
 
-        errorMessage: {
-          type: TRANSFER_MESSAGES.PREVIOUS_TEAM_ID_TYPE,
-          teamExists: TRANSFER_MESSAGES.PREVIOUS_TEAM_NOT_FOUND,
-        },
+      errorMessage: {
+        type: TRANSFER_MESSAGES.PREVIOUS_TEAM_ID_TYPE,
+        teamExists: TRANSFER_MESSAGES.PREVIOUS_TEAM_NOT_FOUND,
       },
+    },
 
-      newTeamId: {
-        type: ['string', 'number'],
-        teamExists: true,
+    newTeamId: {
+      type: 'number',
+      teamExists: true,
 
-        errorMessage: {
-          type: TRANSFER_MESSAGES.NEW_TEAM_ID_TYPE,
-          teamExists: TRANSFER_MESSAGES.NEW_TEAM_NOT_FOUND,
-        },
+      errorMessage: {
+        type: TRANSFER_MESSAGES.NEW_TEAM_ID_TYPE,
+        teamExists: TRANSFER_MESSAGES.NEW_TEAM_NOT_FOUND,
       },
+    },
 
-      transferFee: {
-        type: 'number',
-        min: TRANSFER_FEE_MIN,
-        max: TRANSFER_FEE_MAX,
+    transferFee: {
+      type: 'number',
+      minimum: TRANSFER_FEE_MIN,
+      maximum: TRANSFER_FEE_MAX,
 
-        errorMessage: {
-          type: TRANSFER_MESSAGES.TRANSFER_FEE_TYPE,
-          min: TRANSFER_MESSAGES.TRANSFER_FEE_MIN,
-          max: TRANSFER_MESSAGES.TRANSFER_FEE_MAX,
-        },
+      errorMessage: {
+        type: TRANSFER_MESSAGES.TRANSFER_FEE_TYPE,
+        minimum: TRANSFER_MESSAGES.TRANSFER_FEE_MIN,
+        maximum: TRANSFER_MESSAGES.TRANSFER_FEE_MAX,
       },
+    },
 
-      date: {
-        type: 'date',
+    date: {
+      type: 'object',
 
-        errorMessage: {
-          type: TRANSFER_MESSAGES.DATE_TYPE,
-        },
+      errorMessage: {
+        type: TRANSFER_MESSAGES.DATE_TYPE,
       },
     },
   },
 
   errorMessage: {
     type: TRANSFER_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: TRANSFER_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 
@@ -247,21 +221,11 @@ const updateTransferSchema = ajv.compile<UpdateTransferInput>({
 const getTransferSchema = ajv.compile<GetTransferInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: TRANSFER_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       transferExists: true,
 
       errorMessage: {
@@ -273,6 +237,9 @@ const getTransferSchema = ajv.compile<GetTransferInput>({
 
   errorMessage: {
     type: TRANSFER_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: TRANSFER_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 

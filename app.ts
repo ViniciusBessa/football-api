@@ -50,6 +50,7 @@ import seasonRouter from './routes/seasons';
 import teamRouter from './routes/teams';
 import transferRouter from './routes/transfers';
 import trophyRouter from './routes/trophies';
+import userRouter from './routes/users';
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/competitions', competitionRouter);
@@ -61,6 +62,7 @@ app.use('/api/v1/seasons', seasonRouter);
 app.use('/api/v1/teams', teamRouter);
 app.use('/api/v1/transfers', transferRouter);
 app.use('/api/v1/trophies', trophyRouter);
+app.use('/api/v1/users', userRouter);
 
 // Error handler and page not found middlewares
 import notFoundMiddleware from './middlewares/not-found';

@@ -84,7 +84,7 @@ async function userExistsByEmail(email: string): Promise<boolean> {
   return !!user;
 }
 
-async function userExistsById(id: string): Promise<boolean> {
+async function userExistsById(id: string | number): Promise<boolean> {
   const user = await prisma.user.findFirst({ where: { id: Number(id) } });
   return !!user;
 }
@@ -93,19 +93,7 @@ async function userExistsById(id: string): Promise<boolean> {
 const registerUserSchema = ajv.compile<RegisterUserInput>({
   $async: true,
   type: 'object',
-
-  allOf: [
-    {
-      required: ['name', 'email', 'password'],
-      errorMessage: {
-        required: {
-          name: USER_MESSAGES.NAME_REQUIRED,
-          email: USER_MESSAGES.EMAIL_REQUIRED,
-          password: USER_MESSAGES.PASSWORD_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['name', 'email', 'password'],
 
   properties: {
     name: {
@@ -144,24 +132,18 @@ const registerUserSchema = ajv.compile<RegisterUserInput>({
 
   errorMessage: {
     type: USER_MESSAGES.OBJECT_TYPE,
+    required: {
+      name: USER_MESSAGES.NAME_REQUIRED,
+      email: USER_MESSAGES.EMAIL_REQUIRED,
+      password: USER_MESSAGES.PASSWORD_REQUIRED,
+    },
   },
 });
 
 const loginUserSchema = ajv.compile<LoginUserInput>({
   $async: true,
   type: 'object',
-
-  allOf: [
-    {
-      required: ['email', 'password'],
-      errorMessage: {
-        required: {
-          email: USER_MESSAGES.EMAIL_REQUIRED,
-          password: USER_MESSAGES.PASSWORD_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['email', 'password'],
 
   properties: {
     email: {
@@ -187,6 +169,10 @@ const loginUserSchema = ajv.compile<LoginUserInput>({
 
   errorMessage: {
     type: USER_MESSAGES.OBJECT_TYPE,
+    required: {
+      email: USER_MESSAGES.EMAIL_REQUIRED,
+      password: USER_MESSAGES.PASSWORD_REQUIRED,
+    },
   },
 });
 
@@ -194,21 +180,11 @@ const loginUserSchema = ajv.compile<LoginUserInput>({
 const updateUserSchema = ajv.compile<UpdateUserInput>({
   $async: true,
   type: 'object',
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: USER_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       userExistsById: true,
 
       errorMessage: {
@@ -252,27 +228,20 @@ const updateUserSchema = ajv.compile<UpdateUserInput>({
 
   errorMessage: {
     type: USER_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: USER_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 
 const getUserSchema = ajv.compile<GetUserInput>({
   $async: true,
   type: 'object',
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: USER_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       userExistsById: true,
 
       errorMessage: {
@@ -289,21 +258,11 @@ const getUserSchema = ajv.compile<GetUserInput>({
 const deleteOwnUserSchema = ajv.compile<UpdateUserInput>({
   $async: true,
   type: 'object',
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: USER_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id', 'password'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       userExistsById: true,
 
       errorMessage: {
@@ -314,6 +273,7 @@ const deleteOwnUserSchema = ajv.compile<UpdateUserInput>({
     password: {
       type: 'string',
       minLength: PASSWORD_MIN_LENGTH,
+
       errorMessage: {
         type: USER_MESSAGES.PASSWORD_TYPE,
         minLength: USER_MESSAGES.PASSWORD_MIN,
@@ -323,6 +283,10 @@ const deleteOwnUserSchema = ajv.compile<UpdateUserInput>({
 
   errorMessage: {
     type: USER_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: USER_MESSAGES.ID_REQUIRED,
+      password: USER_MESSAGES.PASSWORD_REQUIRED,
+    },
   },
 });
 

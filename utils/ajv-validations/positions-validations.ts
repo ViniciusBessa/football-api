@@ -32,7 +32,6 @@ const prisma = new PrismaClient();
 ajv.addKeyword({
   keyword: 'nameIsAvailable',
   async: true,
-  type: 'string',
   schema: false,
   validate: nameIsAvailable,
 });
@@ -40,7 +39,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'positionExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: positionExists,
 });
@@ -52,9 +50,9 @@ async function nameIsAvailable(name: string): Promise<boolean> {
   return positions.length === 0;
 }
 
-async function positionExists(positionId: number): Promise<boolean> {
+async function positionExists(positionId: string | number): Promise<boolean> {
   const position = await prisma.position.findFirst({
-    where: { id: positionId },
+    where: { id: Number(positionId) },
   });
   return !!position;
 }
@@ -63,17 +61,7 @@ async function positionExists(positionId: number): Promise<boolean> {
 const createPositionSchema = ajv.compile<CreatePositionInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['name'],
-      errorMessage: {
-        required: {
-          name: POSITION_MESSAGES.NAME_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['name'],
 
   properties: {
     name: {
@@ -90,8 +78,12 @@ const createPositionSchema = ajv.compile<CreatePositionInput>({
       },
     },
   },
+
   errorMessage: {
     type: POSITION_MESSAGES.OBJECT_TYPE,
+    required: {
+      name: POSITION_MESSAGES.NAME_REQUIRED,
+    },
   },
 });
 
@@ -99,21 +91,11 @@ const createPositionSchema = ajv.compile<CreatePositionInput>({
 const updatePositionSchema = ajv.compile<UpdatePositionInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: POSITION_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       positionExists: true,
 
       errorMessage: {
@@ -136,8 +118,12 @@ const updatePositionSchema = ajv.compile<UpdatePositionInput>({
       },
     },
   },
+
   errorMessage: {
     type: POSITION_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: POSITION_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 
@@ -145,21 +131,11 @@ const updatePositionSchema = ajv.compile<UpdatePositionInput>({
 const getPositionSchema = ajv.compile<GetPositionInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: POSITION_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       positionExists: true,
 
       errorMessage: {
@@ -171,6 +147,9 @@ const getPositionSchema = ajv.compile<GetPositionInput>({
 
   errorMessage: {
     type: POSITION_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: POSITION_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 

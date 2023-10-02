@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
+import addFormats from 'ajv-formats';
 import {
   CreateTeamInput,
   GetTeamInput,
@@ -12,8 +13,8 @@ import { countryExists } from './countries-validations';
 const NAME_MIN_LENGTH = 6;
 const NAME_MAX_LENGTH = 80;
 const CODE_LENGTH = 2;
-const FOUNDING_YEAR_MIN = 1800;
-const FOUNDING_YEAR_MAX = new Date().getFullYear();
+const FOUNDING_YEAR_MIN = '1800-01-01';
+const FOUNDING_YEAR_MAX = new Date().toDateString();
 
 // Error messages
 const TEAM_MESSAGES = {
@@ -43,6 +44,7 @@ const TEAM_MESSAGES = {
 };
 
 const ajv = ajvErrors(new Ajv({ allErrors: true }));
+addFormats(ajv);
 
 // Extra Keywords
 const prisma = new PrismaClient();
@@ -50,7 +52,6 @@ const prisma = new PrismaClient();
 ajv.addKeyword({
   keyword: 'nameIsAvailable',
   async: true,
-  type: 'string',
   schema: false,
   validate: nameIsAvailable,
 });
@@ -58,7 +59,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'codeIsAvailable',
   async: true,
-  type: 'string',
   schema: false,
   validate: codeIsAvailable,
 });
@@ -66,7 +66,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'teamExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: teamExists,
 });
@@ -74,7 +73,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'countryExists',
   async: true,
-  type: 'number',
   schema: false,
   validate: countryExists,
 });
@@ -93,9 +91,9 @@ async function codeIsAvailable(code: string): Promise<boolean> {
   return teams.length === 0;
 }
 
-async function teamExists(teamId: number): Promise<boolean> {
+async function teamExists(teamId: string | number): Promise<boolean> {
   const team = await prisma.team.findFirst({
-    where: { id: teamId },
+    where: { id: Number(teamId) },
   });
   return !!team;
 }
@@ -104,21 +102,7 @@ async function teamExists(teamId: number): Promise<boolean> {
 const createTeamSchema = ajv.compile<CreateTeamInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['name', 'code', 'logoUrl', 'foundingYear', 'countryId'],
-      errorMessage: {
-        required: {
-          name: TEAM_MESSAGES.NAME_REQUIRED,
-          code: TEAM_MESSAGES.CODE_REQUIRED,
-          logoUrl: TEAM_MESSAGES.LOGO_URL_REQUIRED,
-          foundingYear: TEAM_MESSAGES.FOUNDING_YEAR_REQUIRED,
-          countryId: TEAM_MESSAGES.COUNTRY_ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['name', 'code', 'logoUrl', 'foundingYear', 'countryId'],
 
   properties: {
     name: {
@@ -158,14 +142,15 @@ const createTeamSchema = ajv.compile<CreateTeamInput>({
     },
 
     foundingYear: {
-      type: 'date',
-      min: FOUNDING_YEAR_MIN,
-      max: FOUNDING_YEAR_MAX,
+      type: 'string',
+      format: 'date',
+      formatMinimum: FOUNDING_YEAR_MIN,
+      formatMaximum: FOUNDING_YEAR_MAX,
 
       errorMessage: {
         type: TEAM_MESSAGES.FOUNDING_YEAR_TYPE,
-        min: TEAM_MESSAGES.FOUNDING_YEAR_MIN,
-        max: TEAM_MESSAGES.FOUNDING_YEAR_MAX,
+        formatMinimum: TEAM_MESSAGES.FOUNDING_YEAR_MIN,
+        formatMaximum: TEAM_MESSAGES.FOUNDING_YEAR_MAX,
       },
     },
 
@@ -178,7 +163,7 @@ const createTeamSchema = ajv.compile<CreateTeamInput>({
     },
 
     countryId: {
-      type: ['string', 'number'],
+      type: 'number',
       countryExists: true,
 
       errorMessage: {
@@ -190,6 +175,13 @@ const createTeamSchema = ajv.compile<CreateTeamInput>({
 
   errorMessage: {
     type: TEAM_MESSAGES.OBJECT_TYPE,
+    required: {
+      name: TEAM_MESSAGES.NAME_REQUIRED,
+      code: TEAM_MESSAGES.CODE_REQUIRED,
+      logoUrl: TEAM_MESSAGES.LOGO_URL_REQUIRED,
+      foundingYear: TEAM_MESSAGES.FOUNDING_YEAR_REQUIRED,
+      countryId: TEAM_MESSAGES.COUNTRY_ID_REQUIRED,
+    },
   },
 });
 
@@ -197,21 +189,11 @@ const createTeamSchema = ajv.compile<CreateTeamInput>({
 const updateTeamSchema = ajv.compile<UpdateTeamInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: TEAM_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       teamExists: true,
 
       errorMessage: {
@@ -257,14 +239,15 @@ const updateTeamSchema = ajv.compile<UpdateTeamInput>({
     },
 
     foundingYear: {
-      type: 'date',
-      min: FOUNDING_YEAR_MIN,
-      max: FOUNDING_YEAR_MAX,
+      type: 'string',
+      format: 'date',
+      formatMinimum: FOUNDING_YEAR_MIN,
+      formatMaximum: FOUNDING_YEAR_MAX,
 
       errorMessage: {
         type: TEAM_MESSAGES.FOUNDING_YEAR_TYPE,
-        min: TEAM_MESSAGES.FOUNDING_YEAR_MIN,
-        max: TEAM_MESSAGES.FOUNDING_YEAR_MAX,
+        formatMinimum: TEAM_MESSAGES.FOUNDING_YEAR_MIN,
+        formatMaximum: TEAM_MESSAGES.FOUNDING_YEAR_MAX,
       },
     },
 
@@ -277,7 +260,7 @@ const updateTeamSchema = ajv.compile<UpdateTeamInput>({
     },
 
     countryId: {
-      type: ['string', 'number'],
+      type: 'number',
       countryExists: true,
 
       errorMessage: {
@@ -289,6 +272,9 @@ const updateTeamSchema = ajv.compile<UpdateTeamInput>({
 
   errorMessage: {
     type: TEAM_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: TEAM_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 
@@ -296,21 +282,11 @@ const updateTeamSchema = ajv.compile<UpdateTeamInput>({
 const getTeamSchema = ajv.compile<GetTeamInput>({
   type: 'object',
   $async: true,
-
-  allof: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: TEAM_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       teamExists: true,
 
       errorMessage: {
@@ -322,6 +298,9 @@ const getTeamSchema = ajv.compile<GetTeamInput>({
 
   errorMessage: {
     type: TEAM_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: TEAM_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 

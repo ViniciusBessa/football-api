@@ -44,7 +44,6 @@ const prisma = new PrismaClient();
 ajv.addKeyword({
   keyword: 'matchExists',
   async: true,
-  type: 'string',
   schema: false,
   validate: matchExists,
 });
@@ -52,7 +51,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'teamExists',
   async: true,
-  type: 'string',
   schema: false,
   validate: teamExists,
 });
@@ -60,7 +58,6 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'playerExists',
   async: true,
-  type: 'string',
   schema: false,
   validate: playerExists,
 });
@@ -68,14 +65,13 @@ ajv.addKeyword({
 ajv.addKeyword({
   keyword: 'matchGoalExists',
   async: true,
-  type: 'string',
   schema: false,
   validate: matchGoalExists,
 });
 
-async function matchGoalExists(matchGoalId: number): Promise<boolean> {
+async function matchGoalExists(matchGoalId: string | number): Promise<boolean> {
   const matchGoal = await prisma.matchGoals.findFirst({
-    where: { id: matchGoalId },
+    where: { id: Number(matchGoalId) },
   });
   return !!matchGoal;
 }
@@ -84,33 +80,11 @@ async function matchGoalExists(matchGoalId: number): Promise<boolean> {
 const createMatchGoalSchema = ajv.compile<CreateMatchGoalInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: [
-        'matchId',
-        'teamId',
-        'goalscorerId',
-        'assistantId',
-        'isOwnGoal',
-        'goalTimestamp',
-      ],
-
-      errorMessage: {
-        required: {
-          matchId: MATCH_GOAL_MESSAGES.MATCH_ID_REQUIRED,
-          teamId: MATCH_GOAL_MESSAGES.TEAM_ID_REQUIRED,
-          goalscorerId: MATCH_GOAL_MESSAGES.GOALSCORER_ID_REQUIRED,
-          isOwnGoal: MATCH_GOAL_MESSAGES.OWN_GOAL_REQUIRED,
-          goalTimestamp: MATCH_GOAL_MESSAGES.GOAL_TIMESTAMP_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['matchId', 'teamId', 'goalscorerId', 'isOwnGoal', 'goalTimestamp'],
 
   properties: {
     matchId: {
-      type: ['string', 'number'],
+      type: 'number',
       matchExists: true,
 
       errorMessage: {
@@ -120,7 +94,7 @@ const createMatchGoalSchema = ajv.compile<CreateMatchGoalInput>({
     },
 
     teamId: {
-      type: ['string', 'number'],
+      type: 'number',
       teamExists: true,
 
       errorMessage: {
@@ -130,7 +104,7 @@ const createMatchGoalSchema = ajv.compile<CreateMatchGoalInput>({
     },
 
     goalScorerId: {
-      type: ['string', 'number'],
+      type: 'number',
       playerExists: true,
 
       errorMessage: {
@@ -140,7 +114,7 @@ const createMatchGoalSchema = ajv.compile<CreateMatchGoalInput>({
     },
 
     assistantId: {
-      type: ['string', 'number'],
+      type: 'number',
       playerExists: true,
 
       errorMessage: {
@@ -158,7 +132,7 @@ const createMatchGoalSchema = ajv.compile<CreateMatchGoalInput>({
     },
 
     goalTimestamp: {
-      type: 'date',
+      type: 'object',
 
       errorMessage: {
         type: MATCH_GOAL_MESSAGES.GOAL_TIMESTAMP_TYPE,
@@ -168,6 +142,13 @@ const createMatchGoalSchema = ajv.compile<CreateMatchGoalInput>({
 
   errorMessage: {
     type: MATCH_GOAL_MESSAGES.OBJECT_TYPE,
+    required: {
+      matchId: MATCH_GOAL_MESSAGES.MATCH_ID_REQUIRED,
+      teamId: MATCH_GOAL_MESSAGES.TEAM_ID_REQUIRED,
+      goalscorerId: MATCH_GOAL_MESSAGES.GOALSCORER_ID_REQUIRED,
+      isOwnGoal: MATCH_GOAL_MESSAGES.OWN_GOAL_REQUIRED,
+      goalTimestamp: MATCH_GOAL_MESSAGES.GOAL_TIMESTAMP_REQUIRED,
+    },
   },
 });
 
@@ -175,21 +156,11 @@ const createMatchGoalSchema = ajv.compile<CreateMatchGoalInput>({
 const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: MATCH_GOAL_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       matchGoalExists: true,
 
       errorMessage: {
@@ -199,7 +170,7 @@ const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
     },
 
     matchId: {
-      type: ['string', 'number'],
+      type: 'number',
       matchExists: true,
 
       errorMessage: {
@@ -209,7 +180,7 @@ const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
     },
 
     teamId: {
-      type: ['string', 'number'],
+      type: 'number',
       teamExists: true,
 
       errorMessage: {
@@ -219,7 +190,7 @@ const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
     },
 
     goalScorerId: {
-      type: ['string', 'number'],
+      type: 'number',
       playerExists: true,
 
       errorMessage: {
@@ -229,7 +200,7 @@ const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
     },
 
     assistantId: {
-      type: ['string', 'number'],
+      type: 'number',
       playerExists: true,
 
       errorMessage: {
@@ -247,7 +218,7 @@ const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
     },
 
     goalTimestamp: {
-      type: 'date',
+      type: 'object',
 
       errorMessage: {
         type: MATCH_GOAL_MESSAGES.GOAL_TIMESTAMP_TYPE,
@@ -257,6 +228,9 @@ const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
 
   errorMessage: {
     type: MATCH_GOAL_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: MATCH_GOAL_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 
@@ -264,21 +238,11 @@ const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
 const getMatchGoalSchema = ajv.compile<GetMatchGoalInput>({
   type: 'object',
   $async: true,
-
-  allOf: [
-    {
-      required: ['id'],
-      errorMessage: {
-        required: {
-          id: MATCH_GOAL_MESSAGES.ID_REQUIRED,
-        },
-      },
-    },
-  ],
+  required: ['id'],
 
   properties: {
     id: {
-      type: ['string', 'number'],
+      type: 'string',
       matchGoalExists: true,
 
       errorMessage: {
@@ -290,6 +254,9 @@ const getMatchGoalSchema = ajv.compile<GetMatchGoalInput>({
 
   errorMessage: {
     type: MATCH_GOAL_MESSAGES.OBJECT_TYPE,
+    required: {
+      id: MATCH_GOAL_MESSAGES.ID_REQUIRED,
+    },
   },
 });
 
