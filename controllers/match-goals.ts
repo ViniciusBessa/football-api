@@ -52,7 +52,7 @@ const createMatchGoal = asyncWrapper(
     // Validating the data passed through the request
     try {
       await createMatchGoalSchema({
-        matchId: Number(matchId),
+        matchId,
         teamId,
         goalscorerId,
         assistantId,
@@ -138,10 +138,10 @@ const deleteMatchGoal = asyncWrapper(
     }
 
     // Deleting the matchgoal from the database and responding
-    const matchgoal = await prisma.matchGoals.delete({
+    const matchGoal = await prisma.matchGoals.delete({
       where: { id: Number(goalId) },
     });
-    return res.status(StatusCodes.OK).json({ matchgoal });
+    return res.status(StatusCodes.OK).json({ matchGoal });
   }
 );
 

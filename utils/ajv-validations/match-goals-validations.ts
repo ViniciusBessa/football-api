@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
+import addFormats from 'ajv-formats';
 import {
   CreateMatchGoalInput,
   GetMatchGoalInput,
@@ -30,6 +31,7 @@ const MATCH_GOAL_MESSAGES = {
   OWN_GOAL_TYPE: "The type of the property 'is own goal' must be a boolean",
   OWN_GOAL_REQUIRED: 'Please, specify if it was a own goal',
   GOAL_TIMESTAMP_TYPE: "The goal's timestamp must be a time",
+  GOAL_TIMESTAMP_FORMAT: "The goal's timestamp must be in a time format",
   GOAL_TIMESTAMP_REQUIRED: "Please, provide the goal's timestamp",
   ID_TYPE: "The type of the goal's id must be string or number",
   ID_REQUIRED: 'Please, provide the id of the goal',
@@ -37,6 +39,7 @@ const MATCH_GOAL_MESSAGES = {
 };
 
 const ajv = ajvErrors(new Ajv({ allErrors: true }));
+addFormats(ajv);
 
 // Extra Keywords
 const prisma = new PrismaClient();
@@ -84,7 +87,7 @@ const createMatchGoalSchema = ajv.compile<CreateMatchGoalInput>({
 
   properties: {
     matchId: {
-      type: 'number',
+      type: 'string',
       matchExists: true,
 
       errorMessage: {
@@ -103,7 +106,7 @@ const createMatchGoalSchema = ajv.compile<CreateMatchGoalInput>({
       },
     },
 
-    goalScorerId: {
+    goalscorerId: {
       type: 'number',
       playerExists: true,
 
@@ -118,8 +121,8 @@ const createMatchGoalSchema = ajv.compile<CreateMatchGoalInput>({
       playerExists: true,
 
       errorMessage: {
-        type: MATCH_GOAL_MESSAGES.GOALSCORER_ID_TYPE,
-        playerExists: MATCH_GOAL_MESSAGES.GOALSCORER_NOT_FOUND,
+        type: MATCH_GOAL_MESSAGES.ASSISTANT_ID_TYPE,
+        playerExists: MATCH_GOAL_MESSAGES.ASSISTANT_NOT_FOUND,
       },
     },
 
@@ -132,10 +135,12 @@ const createMatchGoalSchema = ajv.compile<CreateMatchGoalInput>({
     },
 
     goalTimestamp: {
-      type: 'object',
+      type: 'string',
+      format: 'date-time',
 
       errorMessage: {
         type: MATCH_GOAL_MESSAGES.GOAL_TIMESTAMP_TYPE,
+        format: MATCH_GOAL_MESSAGES.GOAL_TIMESTAMP_FORMAT,
       },
     },
   },
@@ -170,7 +175,7 @@ const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
     },
 
     matchId: {
-      type: 'number',
+      type: 'string',
       matchExists: true,
 
       errorMessage: {
@@ -189,7 +194,7 @@ const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
       },
     },
 
-    goalScorerId: {
+    goalscorerId: {
       type: 'number',
       playerExists: true,
 
@@ -204,8 +209,8 @@ const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
       playerExists: true,
 
       errorMessage: {
-        type: MATCH_GOAL_MESSAGES.GOALSCORER_ID_TYPE,
-        playerExists: MATCH_GOAL_MESSAGES.GOALSCORER_NOT_FOUND,
+        type: MATCH_GOAL_MESSAGES.ASSISTANT_ID_TYPE,
+        playerExists: MATCH_GOAL_MESSAGES.ASSISTANT_NOT_FOUND,
       },
     },
 
@@ -218,10 +223,12 @@ const updateMatchGoalSchema = ajv.compile<UpdateMatchGoalInput>({
     },
 
     goalTimestamp: {
-      type: 'object',
+      type: 'string',
+      format: 'date-time',
 
       errorMessage: {
         type: MATCH_GOAL_MESSAGES.GOAL_TIMESTAMP_TYPE,
+        format: MATCH_GOAL_MESSAGES.GOAL_TIMESTAMP_FORMAT,
       },
     },
   },

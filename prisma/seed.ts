@@ -494,6 +494,55 @@ async function main() {
       newTeamId: teamA.id,
     },
   });
+
+  // Goals
+  const goalA = await prisma.matchGoals.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      matchId: 1,
+      teamId: 1,
+      goalscorerId: 1,
+      goalTimestamp: new Date(),
+      isOwnGoal: true,
+    },
+  });
+
+  const goalB = await prisma.matchGoals.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      matchId: 1,
+      teamId: 1,
+      goalscorerId: 2,
+      goalTimestamp: new Date(),
+      isOwnGoal: false,
+    },
+  });
+
+  const goalC = await prisma.matchGoals.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      matchId: 1,
+      teamId: 1,
+      goalscorerId: 2,
+      goalTimestamp: new Date(),
+      isOwnGoal: false,
+    },
+  });
+
+  const goalD = await prisma.matchGoals.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      matchId: 1,
+      teamId: 1,
+      goalscorerId: 2,
+      goalTimestamp: new Date(),
+      isOwnGoal: true,
+    },
+  });
 }
 
 await main()
