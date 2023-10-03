@@ -28,6 +28,14 @@ describe('Country Endpoints', () => {
       expect(response.body.countries.length).toBeGreaterThanOrEqual(2);
     });
 
+    it('GET /api/v1/countries/:countryId should fail to return a country by not found', async () => {
+      const response = await request
+        .get('/api/v1/countries/15')
+        .set({ Authorization: token });
+      expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+      expect(response.body.err).toEqual(COUNTRY_MESSAGES.NOT_FOUND);
+    });
+
     it('GET /api/v1/countries/:countryId should return a country', async () => {
       const response = await request
         .get('/api/v1/countries/1')
@@ -225,6 +233,14 @@ describe('Country Endpoints', () => {
       expect(response.body.countries.length).toBeGreaterThanOrEqual(2);
     });
 
+    it('GET /api/v1/countries/:countryId should fail to return a country by not found', async () => {
+      const response = await request
+        .get('/api/v1/countries/15')
+        .set({ Authorization: token });
+      expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+      expect(response.body.err).toEqual(COUNTRY_MESSAGES.NOT_FOUND);
+    });
+
     it('GET /api/v1/countries/:countryId should return a country', async () => {
       const response = await request
         .get('/api/v1/countries/1')
@@ -265,6 +281,12 @@ describe('Country Endpoints', () => {
       const response = await request.get('/api/v1/countries');
       expect(response.statusCode).toEqual(StatusCodes.OK);
       expect(response.body.countries.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('GET /api/v1/countries/:countryId should fail to return a country by not found', async () => {
+      const response = await request.get('/api/v1/countries/15');
+      expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+      expect(response.body.err).toEqual(COUNTRY_MESSAGES.NOT_FOUND);
     });
 
     it('GET /api/v1/countries/:countryId should return a country', async () => {

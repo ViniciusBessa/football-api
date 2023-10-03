@@ -28,6 +28,14 @@ describe('Position Endpoints', () => {
       expect(response.body.positions.length).toBeGreaterThanOrEqual(2);
     });
 
+    it('GET /api/v1/positions/:positionId should fail to return a position by not found', async () => {
+      const response = await request
+        .get('/api/v1/positions/15')
+        .set({ Authorization: token });
+      expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+      expect(response.body.err).toEqual(POSITION_MESSAGES.NOT_FOUND);
+    });
+
     it('GET /api/v1/positions/:positionId should return a position', async () => {
       const response = await request
         .get('/api/v1/positions/1')
@@ -167,6 +175,14 @@ describe('Position Endpoints', () => {
       expect(response.body.positions.length).toBeGreaterThanOrEqual(2);
     });
 
+    it('GET /api/v1/positions/:positionId should fail to return a position by not found', async () => {
+      const response = await request
+        .get('/api/v1/positions/15')
+        .set({ Authorization: token });
+      expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+      expect(response.body.err).toEqual(POSITION_MESSAGES.NOT_FOUND);
+    });
+
     it('GET /api/v1/positions/:positionId should return a position', async () => {
       const response = await request
         .get('/api/v1/positions/1')
@@ -207,6 +223,12 @@ describe('Position Endpoints', () => {
       const response = await request.get('/api/v1/positions');
       expect(response.statusCode).toEqual(StatusCodes.OK);
       expect(response.body.positions.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('GET /api/v1/positions/:positionId should fail to return a position by not found', async () => {
+      const response = await request.get('/api/v1/positions/15');
+      expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+      expect(response.body.err).toEqual(POSITION_MESSAGES.NOT_FOUND);
     });
 
     it('GET /api/v1/positions/:positionId should return a position', async () => {

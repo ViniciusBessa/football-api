@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
+import addFormats from 'ajv-formats';
 import {
   CreateTransferInput,
   GetTransferInput,
@@ -10,8 +11,8 @@ import { playerExists } from './players-validations';
 import { teamExists } from './teams-validations';
 
 // Field constraints
-const TRANSFER_FEE_MIN = 1000;
-const TRANSFER_FEE_MAX = 9999999999;
+const FEE_MIN = 1000;
+const FEE_MAX = 9999999999;
 
 // Error messages
 const TRANSFER_MESSAGES = {
@@ -27,11 +28,12 @@ const TRANSFER_MESSAGES = {
   PLAYER_ID_TYPE: "The type of the player's id must be string or number",
   PLAYER_ID_REQUIRED: 'Please, provide the id of the player',
   PLAYER_NOT_FOUND: 'No player was found with the provided id',
-  TRANSFER_FEE_TYPE: 'The transfer fee must be a number',
-  TRANSFER_FEE_MIN: `The transfer fee must be at least ${TRANSFER_FEE_MIN}`,
-  TRANSFER_FEE_MAX: `The maximum value for a transfer is ${TRANSFER_FEE_MAX}`,
-  TRANSFER_FEE_REQUIRED: "Please, provide the transfer's fee",
-  DATE_TYPE: "The transfer's timestamp must be a date",
+  FEE_TYPE: 'The transfer fee must be a number',
+  FEE_MIN: `The transfer fee must be at least ${FEE_MIN}`,
+  FEE_MAX: `The maximum value for a transfer is ${FEE_MAX}`,
+  FEE_REQUIRED: "Please, provide the transfer's fee",
+  DATE_TYPE: "The transfer's date must be a string",
+  DATE_FORMAT: "The transfer's date must be formatted as a date",
   DATE_REQUIRED: "Please, provide the transfer's date",
   ID_TYPE: "The type of the transfer's id must be string or number",
   ID_REQUIRED: 'Please, provide the id of the transfer',
@@ -39,6 +41,7 @@ const TRANSFER_MESSAGES = {
 };
 
 const ajv = ajvErrors(new Ajv({ allErrors: true }));
+addFormats(ajv);
 
 // Extra Keywords
 const prisma = new PrismaClient();
@@ -75,7 +78,7 @@ async function transferExists(transferId: string | number): Promise<boolean> {
 const createTransferSchema = ajv.compile<CreateTransferInput>({
   type: 'object',
   $async: true,
-  required: ['playerId', 'previousTeamId', 'newTeamId', 'transferFee', 'date'],
+  required: ['playerId', 'previousTeamId', 'newTeamId', 'fee', 'date'],
 
   properties: {
     playerId: {
@@ -108,23 +111,25 @@ const createTransferSchema = ajv.compile<CreateTransferInput>({
       },
     },
 
-    transferFee: {
+    fee: {
       type: 'number',
-      minimum: TRANSFER_FEE_MIN,
-      maximum: TRANSFER_FEE_MAX,
+      minimum: FEE_MIN,
+      maximum: FEE_MAX,
 
       errorMessage: {
-        type: TRANSFER_MESSAGES.TRANSFER_FEE_TYPE,
-        minimum: TRANSFER_MESSAGES.TRANSFER_FEE_MIN,
-        maximum: TRANSFER_MESSAGES.TRANSFER_FEE_MAX,
+        type: TRANSFER_MESSAGES.FEE_TYPE,
+        minimum: TRANSFER_MESSAGES.FEE_MIN,
+        maximum: TRANSFER_MESSAGES.FEE_MAX,
       },
     },
 
     date: {
-      type: 'object',
+      type: 'string',
+      format: 'date',
 
       errorMessage: {
         type: TRANSFER_MESSAGES.DATE_TYPE,
+        format: TRANSFER_MESSAGES.DATE_FORMAT,
       },
     },
   },
@@ -135,7 +140,7 @@ const createTransferSchema = ajv.compile<CreateTransferInput>({
       playerId: TRANSFER_MESSAGES.PLAYER_ID_REQUIRED,
       previousTeamId: TRANSFER_MESSAGES.PREVIOUS_TEAM_ID_REQUIRED,
       newTeamId: TRANSFER_MESSAGES.NEW_TEAM_ID_REQUIRED,
-      transferFee: TRANSFER_MESSAGES.TRANSFER_FEE_REQUIRED,
+      fee: TRANSFER_MESSAGES.FEE_REQUIRED,
       date: TRANSFER_MESSAGES.DATE_REQUIRED,
     },
   },
@@ -188,23 +193,25 @@ const updateTransferSchema = ajv.compile<UpdateTransferInput>({
       },
     },
 
-    transferFee: {
+    fee: {
       type: 'number',
-      minimum: TRANSFER_FEE_MIN,
-      maximum: TRANSFER_FEE_MAX,
+      minimum: FEE_MIN,
+      maximum: FEE_MAX,
 
       errorMessage: {
-        type: TRANSFER_MESSAGES.TRANSFER_FEE_TYPE,
-        minimum: TRANSFER_MESSAGES.TRANSFER_FEE_MIN,
-        maximum: TRANSFER_MESSAGES.TRANSFER_FEE_MAX,
+        type: TRANSFER_MESSAGES.FEE_TYPE,
+        minimum: TRANSFER_MESSAGES.FEE_MIN,
+        maximum: TRANSFER_MESSAGES.FEE_MAX,
       },
     },
 
     date: {
-      type: 'object',
+      type: 'string',
+      format: 'date',
 
       errorMessage: {
         type: TRANSFER_MESSAGES.DATE_TYPE,
+        format: TRANSFER_MESSAGES.DATE_FORMAT,
       },
     },
   },

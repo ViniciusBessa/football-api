@@ -12,9 +12,9 @@ import { countryExists } from './countries-validations';
 // Field constraints
 const NAME_MIN_LENGTH = 6;
 const NAME_MAX_LENGTH = 80;
-const CODE_LENGTH = 2;
-const FOUNDING_YEAR_MIN = '1800-01-01';
-const FOUNDING_YEAR_MAX = new Date().toDateString();
+const CODE_LENGTH = 3;
+const FOUNDING_DATE_MIN = new Date('1800-01-01').toISOString();
+const FOUNDING_DATE_MAX = new Date().toISOString();
 
 // Error messages
 const TEAM_MESSAGES = {
@@ -30,10 +30,11 @@ const TEAM_MESSAGES = {
   CODE_LENGTH: `The team's code must have exactly ${CODE_LENGTH} characters`,
   CODE_REQUIRED: 'Please, provide a code to the team',
   CODE_IN_USE: 'The code provided is already in use',
-  FOUNDING_YEAR_MIN: `The team's founding year must be at least ${FOUNDING_YEAR_MIN}`,
-  FOUNDING_YEAR_MAX: `The maximum valid year for the founding year is ${FOUNDING_YEAR_MAX}`,
-  FOUNDING_YEAR_TYPE: "The team's founding year must be a date",
-  FOUNDING_YEAR_REQUIRED: "Please, provide the team's founding year",
+  FOUNDING_DATE_MIN: `The team's founding year must be at least ${FOUNDING_DATE_MIN}`,
+  FOUNDING_DATE_MAX: `The maximum valid year for the founding year is ${FOUNDING_DATE_MAX}`,
+  FOUNDING_DATE_TYPE: "The team's founding year must be a string",
+  FOUNDING_DATE_FORMAT: "The team's founding year must be formatted as a date",
+  FOUNDING_DATE_REQUIRED: "Please, provide the team's founding year",
   IS_NATIONAL_TYPE: "The team's 'is national' must be a boolean value",
   COUNTRY_ID_TYPE: "The country's id must be a number or a string",
   COUNTRY_ID_REQUIRED: "Please, provide the id of the team's country",
@@ -102,7 +103,7 @@ async function teamExists(teamId: string | number): Promise<boolean> {
 const createTeamSchema = ajv.compile<CreateTeamInput>({
   type: 'object',
   $async: true,
-  required: ['name', 'code', 'logoUrl', 'foundingYear', 'countryId'],
+  required: ['name', 'code', 'logoUrl', 'foundingDate', 'countryId'],
 
   properties: {
     name: {
@@ -141,16 +142,17 @@ const createTeamSchema = ajv.compile<CreateTeamInput>({
       },
     },
 
-    foundingYear: {
+    foundingDate: {
       type: 'string',
-      format: 'date',
-      formatMinimum: FOUNDING_YEAR_MIN,
-      formatMaximum: FOUNDING_YEAR_MAX,
+      format: 'date-time',
+      formatMinimum: FOUNDING_DATE_MIN,
+      formatMaximum: FOUNDING_DATE_MAX,
 
       errorMessage: {
-        type: TEAM_MESSAGES.FOUNDING_YEAR_TYPE,
-        formatMinimum: TEAM_MESSAGES.FOUNDING_YEAR_MIN,
-        formatMaximum: TEAM_MESSAGES.FOUNDING_YEAR_MAX,
+        type: TEAM_MESSAGES.FOUNDING_DATE_TYPE,
+        format: TEAM_MESSAGES.FOUNDING_DATE_FORMAT,
+        formatMinimum: TEAM_MESSAGES.FOUNDING_DATE_MIN,
+        formatMaximum: TEAM_MESSAGES.FOUNDING_DATE_MAX,
       },
     },
 
@@ -179,7 +181,7 @@ const createTeamSchema = ajv.compile<CreateTeamInput>({
       name: TEAM_MESSAGES.NAME_REQUIRED,
       code: TEAM_MESSAGES.CODE_REQUIRED,
       logoUrl: TEAM_MESSAGES.LOGO_URL_REQUIRED,
-      foundingYear: TEAM_MESSAGES.FOUNDING_YEAR_REQUIRED,
+      foundingDate: TEAM_MESSAGES.FOUNDING_DATE_REQUIRED,
       countryId: TEAM_MESSAGES.COUNTRY_ID_REQUIRED,
     },
   },
@@ -198,7 +200,7 @@ const updateTeamSchema = ajv.compile<UpdateTeamInput>({
 
       errorMessage: {
         type: TEAM_MESSAGES.ID_TYPE,
-        countryExists: TEAM_MESSAGES.NOT_FOUND,
+        teamExists: TEAM_MESSAGES.NOT_FOUND,
       },
     },
 
@@ -238,16 +240,17 @@ const updateTeamSchema = ajv.compile<UpdateTeamInput>({
       },
     },
 
-    foundingYear: {
+    foundingDate: {
       type: 'string',
-      format: 'date',
-      formatMinimum: FOUNDING_YEAR_MIN,
-      formatMaximum: FOUNDING_YEAR_MAX,
+      format: 'date-time',
+      formatMinimum: FOUNDING_DATE_MIN,
+      formatMaximum: FOUNDING_DATE_MAX,
 
       errorMessage: {
-        type: TEAM_MESSAGES.FOUNDING_YEAR_TYPE,
-        formatMinimum: TEAM_MESSAGES.FOUNDING_YEAR_MIN,
-        formatMaximum: TEAM_MESSAGES.FOUNDING_YEAR_MAX,
+        type: TEAM_MESSAGES.FOUNDING_DATE_TYPE,
+        format: TEAM_MESSAGES.FOUNDING_DATE_FORMAT,
+        formatMinimum: TEAM_MESSAGES.FOUNDING_DATE_MIN,
+        formatMaximum: TEAM_MESSAGES.FOUNDING_DATE_MAX,
       },
     },
 
@@ -304,4 +307,10 @@ const getTeamSchema = ajv.compile<GetTeamInput>({
   },
 });
 
-export { createTeamSchema, updateTeamSchema, getTeamSchema, teamExists };
+export {
+  createTeamSchema,
+  updateTeamSchema,
+  getTeamSchema,
+  teamExists,
+  TEAM_MESSAGES,
+};

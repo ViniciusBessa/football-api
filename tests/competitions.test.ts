@@ -29,6 +29,14 @@ describe('Competition Endpoints', () => {
       expect(response.body.competitions.length).toBeGreaterThanOrEqual(2);
     });
 
+    it('GET /api/v1/competitions/:competitionId should fail to return a competition by not found', async () => {
+      const response = await request
+        .get('/api/v1/competitions/15')
+        .set({ Authorization: token });
+      expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+      expect(response.body.err).toEqual(COMPETITION_MESSAGES.NOT_FOUND);
+    });
+
     it('GET /api/v1/competitions/:competitionId should return a competition', async () => {
       const response = await request
         .get('/api/v1/competitions/1')
@@ -289,6 +297,14 @@ describe('Competition Endpoints', () => {
       expect(response.body.competitions.length).toBeGreaterThanOrEqual(2);
     });
 
+    it('GET /api/v1/competitions/:competitionId should fail to return a competition by not found', async () => {
+      const response = await request
+        .get('/api/v1/competitions/15')
+        .set({ Authorization: token });
+      expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+      expect(response.body.err).toEqual(COMPETITION_MESSAGES.NOT_FOUND);
+    });
+
     it('GET /api/v1/competitions/:competitionId should return a competition', async () => {
       const response = await request
         .get('/api/v1/competitions/1')
@@ -329,6 +345,12 @@ describe('Competition Endpoints', () => {
       const response = await request.get('/api/v1/competitions');
       expect(response.statusCode).toEqual(StatusCodes.OK);
       expect(response.body.competitions.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('GET /api/v1/competitions/:competitionId should fail to return a competition by not found', async () => {
+      const response = await request.get('/api/v1/competitions/15');
+      expect(response.statusCode).toEqual(StatusCodes.NOT_FOUND);
+      expect(response.body.err).toEqual(COMPETITION_MESSAGES.NOT_FOUND);
     });
 
     it('GET /api/v1/competitions/:competitionId should return a competition', async () => {

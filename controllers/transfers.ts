@@ -41,7 +41,7 @@ const getSpecificTransfer = asyncWrapper(
 
 const createTransfer = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { playerId, previousTeamId, newTeamId, transferFee, date } = req.body;
+    const { playerId, previousTeamId, newTeamId, fee, date } = req.body;
 
     // Validating the data passed through the request
     try {
@@ -49,7 +49,7 @@ const createTransfer = asyncWrapper(
         playerId,
         previousTeamId,
         newTeamId,
-        transferFee,
+        fee,
         date,
       });
     } catch (error: any) {
@@ -63,7 +63,7 @@ const createTransfer = asyncWrapper(
 
     // Creating the transfer and responding
     const transfer = await prisma.transfer.create({
-      data: { playerId, previousTeamId, newTeamId, transferFee, date },
+      data: { playerId, previousTeamId, newTeamId, fee, date },
     });
     return res.status(StatusCodes.CREATED).json({ transfer });
   }
@@ -72,7 +72,7 @@ const createTransfer = asyncWrapper(
 const updateTransfer = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
     const { transferId } = req.params;
-    const { playerId, previousTeamId, newTeamId, transferFee, date } = req.body;
+    const { playerId, previousTeamId, newTeamId, fee, date } = req.body;
 
     // Validating the data passed through the request
     try {
@@ -81,7 +81,7 @@ const updateTransfer = asyncWrapper(
         playerId,
         previousTeamId,
         newTeamId,
-        transferFee,
+        fee,
         date,
       });
     } catch (error: any) {
@@ -96,7 +96,7 @@ const updateTransfer = asyncWrapper(
     // Updating the transfer and responding
     const transfer = await prisma.transfer.update({
       where: { id: Number(transferId) },
-      data: { playerId, previousTeamId, newTeamId, transferFee, date },
+      data: { playerId, previousTeamId, newTeamId, fee, date },
     });
     return res.status(StatusCodes.OK).json({ transfer });
   }

@@ -8,6 +8,7 @@ import {
 } from '../../types/match-input';
 import { competitionExists } from './competitions-validations';
 import { teamExists } from './teams-validations';
+import { seasonExists } from './seasons-validations';
 
 // Error messages
 const MATCH_MESSAGES = {
@@ -23,6 +24,9 @@ const MATCH_MESSAGES = {
   COMPETITION_ID_TYPE: "The competition's id must be a number or a string",
   COMPETITION_ID_REQUIRED: 'Please, provide the id of a competition',
   COMPETITION_NOT_FOUND: 'No competition was found with the id provided',
+  SEASON_ID_TYPE: "The season's id must be a number or a string",
+  SEASON_ID_REQUIRED: 'Please, provide the id of a season',
+  SEASON_NOT_FOUND: 'No season was found with the id provided',
   NOT_FOUND: 'No match was found with the provided id',
   ID_TYPE: "The match's id must be a number or a string",
   ID_REQUIRED: 'Please, provide the id of a match',
@@ -48,6 +52,13 @@ ajv.addKeyword({
 });
 
 ajv.addKeyword({
+  keyword: 'seasonExists',
+  async: true,
+  schema: false,
+  validate: seasonExists,
+});
+
+ajv.addKeyword({
   keyword: 'matchExists',
   async: true,
   schema: false,
@@ -65,7 +76,7 @@ async function matchExists(matchId: string | number): Promise<boolean> {
 const createMatchSchema = ajv.compile<CreateMatchInput>({
   type: 'object',
   $async: true,
-  required: ['competitionId', 'homeTeamId', 'awayTeamId'],
+  required: ['competitionId', 'homeTeamId', 'awayTeamId', 'seasonId'],
 
   properties: {
     competitionId: {
@@ -97,6 +108,16 @@ const createMatchSchema = ajv.compile<CreateMatchInput>({
         teamExists: MATCH_MESSAGES.AWAY_TEAM_NOT_FOUND,
       },
     },
+
+    seasonId: {
+      type: 'number',
+      seasonExists: true,
+
+      errorMessage: {
+        type: MATCH_MESSAGES.SEASON_ID_TYPE,
+        seasonExists: MATCH_MESSAGES.SEASON_NOT_FOUND,
+      },
+    },
   },
 
   errorMessage: {
@@ -105,6 +126,7 @@ const createMatchSchema = ajv.compile<CreateMatchInput>({
       competitionId: MATCH_MESSAGES.COMPETITION_ID_REQUIRED,
       homeTeamId: MATCH_MESSAGES.HOME_TEAM_ID_REQUIRED,
       awayTeamId: MATCH_MESSAGES.AWAY_TEAM_ID_REQUIRED,
+      seasonId: MATCH_MESSAGES.SEASON_ID_REQUIRED,
     },
   },
 });
@@ -155,6 +177,16 @@ const updateMatchSchema = ajv.compile<UpdateMatchInput>({
         teamExists: MATCH_MESSAGES.AWAY_TEAM_NOT_FOUND,
       },
     },
+
+    seasonId: {
+      type: 'number',
+      seasonExists: true,
+
+      errorMessage: {
+        type: MATCH_MESSAGES.SEASON_ID_TYPE,
+        seasonExists: MATCH_MESSAGES.SEASON_NOT_FOUND,
+      },
+    },
   },
 
   errorMessage: {
@@ -191,4 +223,10 @@ const getMatchSchema = ajv.compile<GetMatchInput>({
   },
 });
 
-export { createMatchSchema, updateMatchSchema, getMatchSchema, matchExists };
+export {
+  createMatchSchema,
+  updateMatchSchema,
+  getMatchSchema,
+  matchExists,
+  MATCH_MESSAGES,
+};

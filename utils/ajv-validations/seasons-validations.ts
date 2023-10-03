@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import ajvErrors from 'ajv-errors';
 import {
   CreateSeasonInput,
@@ -20,9 +21,11 @@ const SEASON_MESSAGES = {
   YEAR_REQUIRED: "Please, provide the season's year",
   YEAR_IN_USE: 'There is already a season with the provided year',
   IS_CURRENT_TYPE: 'The is current season value must be a boolean',
-  START_TYPE: 'The starting date is invalid',
+  START_TYPE: 'The starting date must be a string',
+  START_FORMAT: 'The starting date must be formatted as a date',
   START_REQUIRED: "Please, provide the season's start date",
-  END_TYPE: 'The endings date is invalid',
+  END_TYPE: 'The ending date must be a string',
+  END_FORMAT: 'The ending date must be formatted as a date',
   END_REQUIRED: "Please, provide the season's end date",
   ID_TYPE: "The season's id must be a number or a string",
   ID_REQUIRED: "Please, provide the season's id",
@@ -30,6 +33,7 @@ const SEASON_MESSAGES = {
 };
 
 const ajv = ajvErrors(new Ajv({ allErrors: true }));
+addFormats(ajv);
 
 // Extra Keywords
 const prisma = new PrismaClient();
@@ -84,18 +88,22 @@ const createSeasonSchema = ajv.compile<CreateSeasonInput>({
     },
 
     start: {
-      type: 'object',
+      type: 'string',
+      format: 'date-time',
 
       errorMessage: {
         type: SEASON_MESSAGES.START_TYPE,
+        format: SEASON_MESSAGES.START_FORMAT,
       },
     },
 
     end: {
-      type: 'object',
+      type: 'string',
+      format: 'date-time',
 
       errorMessage: {
         type: SEASON_MESSAGES.END_TYPE,
+        format: SEASON_MESSAGES.END_FORMAT,
       },
     },
 
@@ -150,18 +158,22 @@ const updateSeasonSchema = ajv.compile<UpdateSeasonInput>({
     },
 
     start: {
-      type: 'object',
+      type: 'string',
+      format: 'date-time',
 
       errorMessage: {
         type: SEASON_MESSAGES.START_TYPE,
+        format: SEASON_MESSAGES.START_FORMAT,
       },
     },
 
     end: {
-      type: 'object',
+      type: 'string',
+      format: 'date-time',
 
       errorMessage: {
         type: SEASON_MESSAGES.END_TYPE,
+        format: SEASON_MESSAGES.END_FORMAT,
       },
     },
 

@@ -200,6 +200,194 @@ async function main() {
       type: CompetitionType.LEAGUE,
     },
   });
+
+  // Seasons
+  const year1920 = await prisma.season.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      year: 1920,
+      start: new Date('1920-01-01'),
+      end: new Date('1920-12-31'),
+      isCurrent: false,
+    },
+  });
+
+  const year1941 = await prisma.season.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      year: 1941,
+      start: new Date('1941-01-01'),
+      end: new Date('1941-12-31'),
+      isCurrent: false,
+    },
+  });
+
+  const year1980 = await prisma.season.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      year: 1980,
+      start: new Date('1980-01-01'),
+      end: new Date('1980-12-31'),
+      isCurrent: false,
+    },
+  });
+
+  const year2000 = await prisma.season.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      year: 2000,
+      start: new Date('2000-01-01'),
+      end: new Date('2000-12-31'),
+      isCurrent: true,
+    },
+  });
+
+  // Teams
+  const teamA = await prisma.team.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      name: 'Team A',
+      code: 'TEA',
+      logoUrl: 'logo.jpg',
+      foundingDate: new Date('1920-01-01'),
+      country: {
+        connect: { id: brazil.id },
+      },
+    },
+  });
+
+  const teamB = await prisma.team.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      name: 'Team B',
+      code: 'TEB',
+      logoUrl: 'logo.jpg',
+      foundingDate: new Date('1920-01-01'),
+      country: {
+        connect: { id: brazil.id },
+      },
+    },
+  });
+
+  const teamC = await prisma.team.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      name: 'Team C',
+      code: 'TEC',
+      logoUrl: 'logo.jpg',
+      foundingDate: new Date('1920-01-01'),
+      country: {
+        connect: { id: brazil.id },
+      },
+    },
+  });
+
+  const teamD = await prisma.team.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      name: 'Team D',
+      code: 'TED',
+      logoUrl: 'logo.jpg',
+      foundingDate: new Date('1920-01-01'),
+      country: {
+        connect: { id: brazil.id },
+      },
+    },
+  });
+
+  // Trophies
+  const trophyA = await prisma.trophy.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      competitionId: 2,
+      seasonId: 1,
+      teamId: 2,
+    },
+  });
+
+  const trophyB = await prisma.trophy.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      competitionId: 1,
+      seasonId: 3,
+      teamId: 1,
+    },
+  });
+
+  const trophyC = await prisma.trophy.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      competitionId: 3,
+      seasonId: 1,
+      teamId: 2,
+    },
+  });
+
+  const trophyD = await prisma.trophy.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      competitionId: 1,
+      seasonId: 1,
+      teamId: 2,
+    },
+  });
+
+  // Matches
+  const matchA = await prisma.match.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      competitionId: 1,
+      homeTeamId: 1,
+      awayTeamId: 2,
+      seasonId: 1,
+    },
+  });
+
+  const matchB = await prisma.match.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      competitionId: 1,
+      homeTeamId: 2,
+      awayTeamId: 1,
+      seasonId: 2,
+    },
+  });
+
+  const matchC = await prisma.match.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      competitionId: 3,
+      homeTeamId: 1,
+      awayTeamId: 2,
+      seasonId: 1,
+    },
+  });
+
+  const matchD = await prisma.match.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      competitionId: 2,
+      homeTeamId: 3,
+      awayTeamId: 2,
+      seasonId: 2,
+    },
+  });
 }
 
 await main()

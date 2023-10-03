@@ -41,7 +41,7 @@ const getSpecificTeam = asyncWrapper(
 
 const createTeam = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, code, foundingYear, logoUrl, isNational, countryId } =
+    const { name, code, foundingDate, logoUrl, isNational, countryId } =
       req.body;
 
     // Validating the data passed through the request
@@ -49,7 +49,7 @@ const createTeam = asyncWrapper(
       await createTeamSchema({
         name,
         code,
-        foundingYear,
+        foundingDate,
         logoUrl,
         isNational,
         countryId,
@@ -65,7 +65,7 @@ const createTeam = asyncWrapper(
 
     // Creating the team and responding
     const team = await prisma.team.create({
-      data: { name, code, foundingYear, logoUrl, isNational, countryId },
+      data: { name, code, foundingDate, logoUrl, isNational, countryId },
     });
     return res.status(StatusCodes.CREATED).json({ team });
   }
@@ -74,7 +74,7 @@ const createTeam = asyncWrapper(
 const updateTeam = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
     const { teamId } = req.params;
-    const { name, code, foundingYear, logoUrl, isNational, countryId } =
+    const { name, code, foundingDate, logoUrl, isNational, countryId } =
       req.body;
 
     // Validating the data passed through the request
@@ -83,7 +83,7 @@ const updateTeam = asyncWrapper(
         id: teamId,
         name,
         code,
-        foundingYear,
+        foundingDate,
         logoUrl,
         isNational,
         countryId,
@@ -100,7 +100,7 @@ const updateTeam = asyncWrapper(
     // Updating the team and responding
     const team = await prisma.team.update({
       where: { id: Number(teamId) },
-      data: { name, code, foundingYear, logoUrl, isNational, countryId },
+      data: { name, code, foundingDate, logoUrl, isNational, countryId },
     });
     return res.status(StatusCodes.OK).json({ team });
   }

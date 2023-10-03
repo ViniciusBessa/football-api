@@ -197,4 +197,9 @@ const getTrophySchema = ajv.compile<GetTrophyInput>({
   },
 });
 
-export { createTrophySchema, updateTrophySchema, getTrophySchema };
+export {
+  createTrophySchema,
+  updateTrophySchema,
+  getTrophySchema,
+  TROPHY_MESSAGES,
+};

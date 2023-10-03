@@ -88,7 +88,7 @@ model Team {
   id           Int      @id @default(autoincrement())
   name         String   @unique @db.VarChar(75)
   code         String   @unique @db.VarChar(3)
-  foundingYear DateTime @db.Date
+  foundingDate DateTime @db.Date
   logoUrl      String   @db.Text
   isNational   Boolean  @default(false) @db.Boolean
 
@@ -212,8 +212,8 @@ model Transfer {
   newTeam   Team @relation(fields: [newTeamId], references: [id], onDelete: Cascade, name: "playersBought")
   newTeamId Int
 
-  transferFee Decimal  @db.Decimal(12, 2)
-  date        DateTime @db.Date
+  fee  Decimal  @db.Decimal(12, 2)
+  date DateTime @db.Date
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
