@@ -125,7 +125,7 @@ const createTransferSchema = ajv.compile<CreateTransferInput>({
 
     date: {
       type: 'string',
-      format: 'date',
+      format: 'date-time',
 
       errorMessage: {
         type: TRANSFER_MESSAGES.DATE_TYPE,
@@ -207,7 +207,7 @@ const updateTransferSchema = ajv.compile<UpdateTransferInput>({
 
     date: {
       type: 'string',
-      format: 'date',
+      format: 'date-time',
 
       errorMessage: {
         type: TRANSFER_MESSAGES.DATE_TYPE,

@@ -388,6 +388,112 @@ async function main() {
       seasonId: 2,
     },
   });
+
+  // Players
+  const playerA = await prisma.player.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      name: 'Player A',
+      dateOfBirth: new Date('1990-01-01'),
+      height: 1.8,
+      weight: 70,
+      countryId: spain.id,
+      positionId: goalkeeper.id,
+      currentTeamId: teamA.id,
+    },
+  });
+
+  const playerB = await prisma.player.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      name: 'Player B',
+      dateOfBirth: new Date('1990-01-01'),
+      height: 1.8,
+      weight: 70,
+      countryId: spain.id,
+      positionId: goalkeeper.id,
+      currentTeamId: teamA.id,
+    },
+  });
+
+  const playerC = await prisma.player.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      name: 'Player C',
+      dateOfBirth: new Date('1990-01-01'),
+      height: 1.8,
+      weight: 70,
+      countryId: spain.id,
+      positionId: goalkeeper.id,
+      currentTeamId: teamA.id,
+    },
+  });
+
+  const playerD = await prisma.player.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      name: 'Player D',
+      dateOfBirth: new Date('1990-01-01'),
+      height: 1.8,
+      weight: 70,
+      countryId: spain.id,
+      positionId: goalkeeper.id,
+      currentTeamId: teamA.id,
+    },
+  });
+
+  // Transfers
+  const transferA = await prisma.transfer.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      date: new Date(),
+      fee: 100000,
+      playerId: playerA.id,
+      previousTeamId: teamA.id,
+      newTeamId: teamB.id,
+    },
+  });
+
+  const transferB = await prisma.transfer.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      date: new Date(),
+      fee: 60000,
+      playerId: playerA.id,
+      previousTeamId: teamB.id,
+      newTeamId: teamA.id,
+    },
+  });
+
+  const transferC = await prisma.transfer.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      date: new Date(),
+      fee: 100000,
+      playerId: playerB.id,
+      previousTeamId: teamB.id,
+      newTeamId: teamA.id,
+    },
+  });
+
+  const transferD = await prisma.transfer.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      date: new Date(),
+      fee: 100000,
+      playerId: playerB.id,
+      previousTeamId: teamB.id,
+      newTeamId: teamA.id,
+    },
+  });
 }
 
 await main()

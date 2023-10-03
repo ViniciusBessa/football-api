@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import ajvErrors from 'ajv-errors';
 import {
   CreatePlayerInput,
@@ -17,6 +18,7 @@ const HEIGHT_MIN = 1.5;
 const HEIGHT_MAX = 2.4;
 const WEIGHT_MIN = 40;
 const WEIGHT_MAX = 140;
+const DATE_OF_BIRTH_MIN = new Date('1800-01-01');
 
 // Error messages
 const PLAYER_MESSAGES = {
@@ -35,6 +37,8 @@ const PLAYER_MESSAGES = {
   WEIGHT_MAX: `The maximum value for the player's weight is ${WEIGHT_MAX}`,
   WEIGHT_REQUIRED: "Please, provide the player's weight",
   DATE_OF_BIRTH_TYPE: "The player's date of birth must be a date",
+  DATE_OF_BIRTH_MIN: `The date of birth must be at least from the year ${DATE_OF_BIRTH_MIN.getFullYear()}`,
+  DATE_OF_BIRTH_FORMAT: 'The date of birth must be formatted as a date',
   DATE_OF_BIRTH_REQUIRED: "Please, provide the player's date of birth",
   POSITION_ID_TYPE: "The position's id must be a number or a string",
   POSITION_ID_REQUIRED: "Please, provide the id of the player's position",
@@ -51,6 +55,7 @@ const PLAYER_MESSAGES = {
 };
 
 const ajv = ajvErrors(new Ajv({ allErrors: true }));
+addFormats(ajv);
 
 // Extra Keywords
 const prisma = new PrismaClient();
@@ -134,10 +139,14 @@ const createPlayerSchema = ajv.compile<CreatePlayerInput>({
     },
 
     dateOfBirth: {
-      type: 'object',
+      type: 'string',
+      format: 'date-time',
+      formatMinimum: DATE_OF_BIRTH_MIN.toISOString(),
 
       errorMessage: {
         type: PLAYER_MESSAGES.DATE_OF_BIRTH_TYPE,
+        format: PLAYER_MESSAGES.DATE_OF_BIRTH_FORMAT,
+        formatMinimum: PLAYER_MESSAGES.DATE_OF_BIRTH_MIN,
       },
     },
 
@@ -185,7 +194,7 @@ const createPlayerSchema = ajv.compile<CreatePlayerInput>({
       },
     },
 
-    teamId: {
+    currentTeamId: {
       type: 'number',
       teamExists: true,
 
@@ -242,10 +251,14 @@ const updatePlayerSchema = ajv.compile<UpdatePlayerInput>({
     },
 
     dateOfBirth: {
-      type: 'object',
+      type: 'string',
+      format: 'date-time',
+      formatMinimum: DATE_OF_BIRTH_MIN.toISOString(),
 
       errorMessage: {
         type: PLAYER_MESSAGES.DATE_OF_BIRTH_TYPE,
+        format: PLAYER_MESSAGES.DATE_OF_BIRTH_FORMAT,
+        formatMinimum: PLAYER_MESSAGES.DATE_OF_BIRTH_MIN,
       },
     },
 
@@ -293,7 +306,7 @@ const updatePlayerSchema = ajv.compile<UpdatePlayerInput>({
       },
     },
 
-    teamId: {
+    currentTeamId: {
       type: 'number',
       teamExists: true,
 
@@ -343,4 +356,5 @@ export {
   updatePlayerSchema,
   getPlayerSchema,
   playerExists,
+  PLAYER_MESSAGES,
 };
