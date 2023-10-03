@@ -245,4 +245,5 @@ export {
   updateCompetitionSchema,
   getCompetitionSchema,
   competitionExists,
+  COMPETITION_MESSAGES,
 };

@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { BadRequestError, NotFoundError } from '../errors';
 import {
+  COMPETITION_MESSAGES,
   createCompetitionSchema,
   getCompetitionSchema,
   updateCompetitionSchema,
@@ -51,6 +52,8 @@ const createCompetition = asyncWrapper(
 
       if (errorMessage.includes('was found')) {
         throw new NotFoundError(errorMessage);
+      } else if (errorMessage.includes('must be equal')) {
+        throw new BadRequestError(COMPETITION_MESSAGES.TYPE);
       }
       throw new BadRequestError(errorMessage);
     }
@@ -82,6 +85,8 @@ const updateCompetition = asyncWrapper(
 
       if (errorMessage.includes('was found')) {
         throw new NotFoundError(errorMessage);
+      } else if (errorMessage.includes('must be equal')) {
+        throw new BadRequestError(COMPETITION_MESSAGES.TYPE);
       }
       throw new BadRequestError(errorMessage);
     }

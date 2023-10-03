@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { CompetitionType, PrismaClient } from '@prisma/client';
 import { encryptPassword } from '../utils/encryption';
 
 const prisma = new PrismaClient();
@@ -79,6 +79,125 @@ async function main() {
       email: 'james@gmail.com',
       password: await encryptPassword('jameswilliams'),
       role: 'USER',
+    },
+  });
+
+  // Countries
+  const brazil = await prisma.country.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      name: 'Brazil',
+      code: 'BR',
+      flagUrl: 'image.jpg',
+    },
+  });
+
+  const spain = await prisma.country.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      name: 'Spain',
+      code: 'ES',
+      flagUrl: 'image.jpg',
+    },
+  });
+
+  const unitedStates = await prisma.country.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      name: 'United States of America',
+      code: 'US',
+      flagUrl: 'image.jpg',
+    },
+  });
+
+  const uruguay = await prisma.country.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      name: 'Uruguay',
+      code: 'UY',
+      flagUrl: 'image.jpg',
+    },
+  });
+
+  // Positions
+  const goalkeeper = await prisma.position.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      name: 'Goalkeeper',
+    },
+  });
+
+  const leftWinger = await prisma.position.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      name: 'Left Winger',
+    },
+  });
+
+  const rightWinger = await prisma.position.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      name: 'Right Winger',
+    },
+  });
+
+  const centreForward = await prisma.position.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      name: 'Centre Forward',
+    },
+  });
+
+  // Competitions
+  const bfCup = await prisma.competition.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      name: 'BF Cup',
+      code: 'BF',
+      logoUrl: 'comp.jpg',
+      type: CompetitionType.CUP,
+    },
+  });
+
+  const englishLeague = await prisma.competition.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      name: 'English League',
+      code: 'EL',
+      logoUrl: 'comp.jpg',
+      type: CompetitionType.LEAGUE,
+    },
+  });
+
+  const spanishCup = await prisma.competition.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      name: 'Spanish Cup',
+      code: 'ES',
+      logoUrl: 'comp.jpg',
+      type: CompetitionType.CUP,
+    },
+  });
+
+  const patskiLeague = await prisma.competition.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      name: 'Patski League',
+      code: 'PA',
+      logoUrl: 'comp.jpg',
+      type: CompetitionType.LEAGUE,
     },
   });
 }
