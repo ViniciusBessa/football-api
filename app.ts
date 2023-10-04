@@ -65,7 +65,7 @@ app.use('/api/v1/trophies', trophyRouter);
 app.use('/api/v1/users', userRouter);
 
 // Error handler and page not found middlewares
-import notFoundMiddleware from './middlewares/not-found';
+import { notFoundMiddleware } from './middlewares/not-found';
 import errorHandlerMiddleware from './middlewares/error-handler';
 
 app.use(notFoundMiddleware);
