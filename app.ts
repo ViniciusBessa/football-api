@@ -39,6 +39,12 @@ import authMiddleware from './middlewares/authentication';
 app.use(trimInputs);
 app.use(authMiddleware);
 
+// Swagger
+import swaggerUi from 'swagger-ui-express';
+import swaggerDoc from './swagger.json';
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+
 // Routes
 import authRouter from './routes/auth';
 import competitionRouter from './routes/competitions';
