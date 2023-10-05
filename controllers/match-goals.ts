@@ -113,7 +113,6 @@ const updateMatchGoal = asyncWrapper(
     const matchGoal = await prisma.matchGoals.update({
       where: { id: Number(goalId) },
       data: {
-        matchId: Number(matchId),
         teamId,
         goalscorerId,
         assistantId,
