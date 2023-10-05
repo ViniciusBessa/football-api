@@ -96,7 +96,7 @@ model Team {
   countryId Int
 
   players       Player[]
-  trohpies      Trophy[]
+  trophies      Trophy[]
   homeMatches   Match[]      @relation(name: "homeMatches")
   awayMatches   Match[]      @relation(name: "awayMatches")
   matchGoals    MatchGoals[]
@@ -125,12 +125,12 @@ model Player {
   currentTeam   Team @relation(fields: [currentTeamId], references: [id], onDelete: Cascade)
   currentTeamId Int
 
-  goals   MatchGoals[] @relation(name: "goals")
-  assists MatchGoals[] @relation(name: "assists")
+  goals     MatchGoals[] @relation(name: "goals")
+  assists   MatchGoals[] @relation(name: "assists")
+  transfers Transfer[]
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Transfer  Transfer[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("players")
 }
@@ -168,7 +168,7 @@ model Match {
   season   Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
   seasonId Int
 
-  matchGoals MatchGoals[]
+  goals MatchGoals[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
