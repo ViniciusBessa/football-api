@@ -1,0 +1,4874 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Football API - OpenAPI 3.0",
+    "description": "This a simple API to adminster objects related too football, such as players, teams, competitions, matches, etc.\n\nSome useful links:\n- [The API repository](https://github.com/ViniciusBessa/football-api)\n- [The source API definition used](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)",
+    "contact": {
+      "email": "vinicius.b.silva3@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/license/mit/"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Access endpoints to register, login and get info from users"
+    },
+    {
+      "name": "user",
+      "description": "Access endpoints to get, update and delete users"
+    },
+    {
+      "name": "country",
+      "description": "Access endpoints to get, create, update and delete countries"
+    },
+    {
+      "name": "position",
+      "description": "Access endpoints to get, create, update and delete positions"
+    },
+    {
+      "name": "competition",
+      "description": "Access endpoints to get, create, update and delete competitions"
+    },
+    {
+      "name": "season",
+      "description": "Access endpoints to get, create, update and delete seasons"
+    },
+    {
+      "name": "team",
+      "description": "Access endpoints to get, create, update and delete teams"
+    },
+    {
+      "name": "player",
+      "description": "Access endpoints to get, create, update and delete players"
+    },
+    {
+      "name": "trophy",
+      "description": "Access endpoints to get, create, update and delete trophes"
+    },
+    {
+      "name": "match",
+      "description": "Access endpoints to get, create, update and delete matches"
+    },
+    {
+      "name": "goal",
+      "description": "Access endpoints to get, create, update and delete goals"
+    },
+    {
+      "name": "transfer",
+      "description": "Access endpoints to get, create, update and delete transfers"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register an user",
+        "description": "Register a new user in the system",
+        "operationId": "register",
+        "requestBody": {
+          "required": true,
+          "description": "Register a new user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Robert"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "robert@email.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "newPassword"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully registered an user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to register an user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login an user",
+        "description": "Get a authentication token for an user",
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "description": "Get a authentication token for an user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "robert@email.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "newPassword"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully logged in as an user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/user": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Get info from your user account",
+        "description": "Get info from your user account",
+        "operationId": "userInfo",
+        "responses": {
+          "200": {
+            "description": "Successfully returned info from your account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get all users",
+        "description": "Get all users",
+        "operationId": "getUsers",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get a specific user",
+        "description": "Get a specific user",
+        "operationId": "getUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of user to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No user was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Update an user",
+        "description": "Update an user",
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of user to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Update an specific user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Robert"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "robert@email.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "newPassword"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to update an user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No user was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Delete an user",
+        "description": "Delete an user",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of user to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No user was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/countries": {
+      "get": {
+        "tags": [
+          "country"
+        ],
+        "summary": "Get all countries",
+        "description": "Get all countries",
+        "operationId": "getCountries",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all countries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "countries": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Country"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "country"
+        ],
+        "summary": "Create a country",
+        "description": "Create a country",
+        "operationId": "createCountry",
+        "requestBody": {
+          "required": true,
+          "description": "Create a country in the database",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Brazil"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "BR"
+                  },
+                  "flagUrl": {
+                    "type": "string",
+                    "example": "https://flags.com/brazil.jpg"
+                  }
+                },
+                "required": [
+                  "name",
+                  "code",
+                  "flagUrl"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a country",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "$ref": "#/components/schemas/Country"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to create a country",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/countries/{countryId}": {
+      "get": {
+        "tags": [
+          "country"
+        ],
+        "summary": "Get a specific country",
+        "description": "Get a specific country",
+        "operationId": "getCountry",
+        "parameters": [
+          {
+            "name": "countryId",
+            "in": "path",
+            "description": "ID of country to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the country",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "$ref": "#/components/schemas/Country"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No country was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "country"
+        ],
+        "summary": "Update a country",
+        "description": "Update a country",
+        "operationId": "updateCountry",
+        "parameters": [
+          {
+            "name": "countryId",
+            "in": "path",
+            "description": "ID of country to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Update a specific country",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Brazil"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "BR"
+                  },
+                  "flagUrl": {
+                    "type": "string",
+                    "example": "https://flags.com/brazil.jpg"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the country",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "$ref": "#/components/schemas/Country"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to update a country",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No country was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "country"
+        ],
+        "summary": "Delete a country",
+        "description": "Delete a country",
+        "operationId": "deleteCountry",
+        "parameters": [
+          {
+            "name": "countryId",
+            "in": "path",
+            "description": "ID of country to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the country",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "$ref": "#/components/schemas/Country"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No country was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/positions": {
+      "get": {
+        "tags": [
+          "position"
+        ],
+        "summary": "Get all positions",
+        "description": "Get all positions",
+        "operationId": "getPositions",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all positions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "positions": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Position"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "position"
+        ],
+        "summary": "Create a position",
+        "description": "Create a position",
+        "operationId": "createPosition",
+        "requestBody": {
+          "required": true,
+          "description": "Create a position in the database",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Goalkeeper"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a position",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "position": {
+                      "$ref": "#/components/schemas/Position"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to create a position",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/positions/{positionId}": {
+      "get": {
+        "tags": [
+          "position"
+        ],
+        "summary": "Get a specific position",
+        "description": "Get a specific position",
+        "operationId": "getposition",
+        "parameters": [
+          {
+            "name": "positionId",
+            "in": "path",
+            "description": "ID of position to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the position",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "position": {
+                      "$ref": "#/components/schemas/Position"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No position was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "position"
+        ],
+        "summary": "Update a position",
+        "description": "Update a position",
+        "operationId": "updatePosition",
+        "parameters": [
+          {
+            "name": "positionId",
+            "in": "path",
+            "description": "ID of position to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Update a specific position",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Goalkeeper"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the position",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "position": {
+                      "$ref": "#/components/schemas/Position"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to update a position",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No position was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "position"
+        ],
+        "summary": "Delete a position",
+        "description": "Delete a position",
+        "operationId": "deletePosition",
+        "parameters": [
+          {
+            "name": "positionId",
+            "in": "path",
+            "description": "ID of position to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the position",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "position": {
+                      "$ref": "#/components/schemas/Position"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No position was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/competitions": {
+      "get": {
+        "tags": [
+          "competition"
+        ],
+        "summary": "Get all competitions",
+        "description": "Get all competitions",
+        "operationId": "getCompetitions",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all competition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "competition": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Competition"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "competition"
+        ],
+        "summary": "Create a competition",
+        "description": "Create a competition",
+        "operationId": "createCompetition",
+        "requestBody": {
+          "required": true,
+          "description": "Create a competition in the database",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "International League"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "IL"
+                  },
+                  "logoUrl": {
+                    "type": "string",
+                    "example": "logo.jpg"
+                  },
+                  "type": {
+                    "type": "string",
+                    "example": "LEAGUE",
+                    "enum": [
+                      "CUP",
+                      "LEAGUE"
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "code",
+                  "logoUrl",
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a competition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "competition": {
+                      "$ref": "#/components/schemas/Competition"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to create a competition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/competitions/{competitionId}": {
+      "get": {
+        "tags": [
+          "competition"
+        ],
+        "summary": "Get a specific competition",
+        "description": "Get a specific competition",
+        "operationId": "getCompetition",
+        "parameters": [
+          {
+            "name": "competitionId",
+            "in": "path",
+            "description": "ID of competition to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the competition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "competition": {
+                      "$ref": "#/components/schemas/Competition"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No competition was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "competition"
+        ],
+        "summary": "Update a competition",
+        "description": "Update a competition",
+        "operationId": "updateCompetition",
+        "parameters": [
+          {
+            "name": "competitionId",
+            "in": "path",
+            "description": "ID of competition to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Update a specific competition",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "International League"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "IL"
+                  },
+                  "logoUrl": {
+                    "type": "string",
+                    "example": "logo.jpg"
+                  },
+                  "type": {
+                    "type": "string",
+                    "example": "LEAGUE",
+                    "enum": [
+                      "CUP",
+                      "LEAGUE"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the competition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "competition": {
+                      "$ref": "#/components/schemas/Competition"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to update a competition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No competition was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "competition"
+        ],
+        "summary": "Delete a competition",
+        "description": "Delete a competition",
+        "operationId": "deleteCompetition",
+        "parameters": [
+          {
+            "name": "competitionId",
+            "in": "path",
+            "description": "ID of competition to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the competition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "competition": {
+                      "$ref": "#/components/schemas/Competition"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No competition was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/seasons": {
+      "get": {
+        "tags": [
+          "season"
+        ],
+        "summary": "Get all seasons",
+        "description": "Get all seasons",
+        "operationId": "getSeasons",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all seasons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "seasons": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Season"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "season"
+        ],
+        "summary": "Create a season",
+        "description": "Create a season",
+        "operationId": "createSeason",
+        "requestBody": {
+          "required": true,
+          "description": "Create a season in the database",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "year": {
+                    "type": "integer",
+                    "format": "i32"
+                  },
+                  "start": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "end": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "isCurrent": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "year",
+                  "start",
+                  "end"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a season",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "season": {
+                      "$ref": "#/components/schemas/Season"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to create a season",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/seasons/{seasonId}": {
+      "get": {
+        "tags": [
+          "season"
+        ],
+        "summary": "Get a specific season",
+        "description": "Get a specific season",
+        "operationId": "getSeason",
+        "parameters": [
+          {
+            "name": "seasonId",
+            "in": "path",
+            "description": "ID of season to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the season",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "season": {
+                      "$ref": "#/components/schemas/Season"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No season was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "season"
+        ],
+        "summary": "Update a season",
+        "description": "Update a season",
+        "operationId": "updateSeason",
+        "parameters": [
+          {
+            "name": "seasonId",
+            "in": "path",
+            "description": "ID of season to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Update a specific season",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "year": {
+                    "type": "integer",
+                    "format": "i32"
+                  },
+                  "start": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "end": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "isCurrent": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the season",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "season": {
+                      "$ref": "#/components/schemas/Season"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to update a season",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No season was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "season"
+        ],
+        "summary": "Delete a season",
+        "description": "Delete a season",
+        "operationId": "deleteSeason",
+        "parameters": [
+          {
+            "name": "seasonId",
+            "in": "path",
+            "description": "ID of season to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the season",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "season": {
+                      "$ref": "#/components/schemas/Season"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No season was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/teams": {
+      "get": {
+        "tags": [
+          "team"
+        ],
+        "summary": "Get all teams",
+        "description": "Get all teams",
+        "operationId": "getTeams",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all teams",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "teams": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Team"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "team"
+        ],
+        "summary": "Create a team",
+        "description": "Create a team",
+        "operationId": "createTeam",
+        "requestBody": {
+          "required": true,
+          "description": "Create a team in the database",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Team A"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "TEA"
+                  },
+                  "foundingDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "logoUrl": {
+                    "type": "string",
+                    "example": "https://teams-logos.com/team-a.jpg"
+                  },
+                  "isNational": {
+                    "type": "boolean"
+                  },
+                  "countryId": {
+                    "type": "integer",
+                    "format": "i64"
+                  }
+                },
+                "required": [
+                  "name",
+                  "code",
+                  "foundingDate",
+                  "logoUrl",
+                  "countryId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a team",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "team": {
+                      "$ref": "#/components/schemas/Team"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to create a team",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/teams/{teamId}": {
+      "get": {
+        "tags": [
+          "team"
+        ],
+        "summary": "Get a specific team",
+        "description": "Get a specific team",
+        "operationId": "getTeam",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "description": "ID of team to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the team",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "team": {
+                      "$ref": "#/components/schemas/Team"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No team was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "team"
+        ],
+        "summary": "Update a team",
+        "description": "Update a team",
+        "operationId": "updateTeam",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "description": "ID of team to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Update a specific team",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Team A"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "TEA"
+                  },
+                  "foundingDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "logoUrl": {
+                    "type": "string",
+                    "example": "https://teams-logos.com/team-a.jpg"
+                  },
+                  "isNational": {
+                    "type": "boolean"
+                  },
+                  "countryId": {
+                    "type": "integer",
+                    "format": "i64"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the team",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "team": {
+                      "$ref": "#/components/schemas/Team"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to update a team",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No team was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "team"
+        ],
+        "summary": "Delete a team",
+        "description": "Delete a team",
+        "operationId": "deleteTeam",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "description": "ID of team to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the team",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "team": {
+                      "$ref": "#/components/schemas/Team"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No team was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/players": {
+      "get": {
+        "tags": [
+          "player"
+        ],
+        "summary": "Get all players",
+        "description": "Get all players",
+        "operationId": "getPlayers",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all players",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "players": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Player"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "player"
+        ],
+        "summary": "Create a player",
+        "description": "Create a player",
+        "operationId": "createPlayer",
+        "requestBody": {
+          "required": true,
+          "description": "Create a player in the database",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Robert"
+                  },
+                  "dateOfBirth": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "height": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "weight": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "positionId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "countryId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "currentTeamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  }
+                },
+                "required": [
+                  "name",
+                  "dateOfBirth",
+                  "height",
+                  "weight",
+                  "positionId",
+                  "countryId",
+                  "currentTeamId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a player",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "player": {
+                      "$ref": "#/components/schemas/Player"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to create a player",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/players/{playerId}": {
+      "get": {
+        "tags": [
+          "player"
+        ],
+        "summary": "Get a specific player",
+        "description": "Get a specific player",
+        "operationId": "getPlayer",
+        "parameters": [
+          {
+            "name": "playerId",
+            "in": "path",
+            "description": "ID of player to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the player",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "player": {
+                      "$ref": "#/components/schemas/Player"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No player was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "player"
+        ],
+        "summary": "Update a player",
+        "description": "Update a player",
+        "operationId": "updatePlayer",
+        "parameters": [
+          {
+            "name": "playerId",
+            "in": "path",
+            "description": "ID of player to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Update a specific player",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Robert"
+                  },
+                  "dateOfBirth": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "height": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "weight": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "positionId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "countryId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "currentTeamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the player",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "player": {
+                      "$ref": "#/components/schemas/Player"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to update a player",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No player was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "player"
+        ],
+        "summary": "Delete a player",
+        "description": "Delete a player",
+        "operationId": "deletePlayer",
+        "parameters": [
+          {
+            "name": "playerId",
+            "in": "path",
+            "description": "ID of player to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the player",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "player": {
+                      "$ref": "#/components/schemas/Player"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No player was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/trophies": {
+      "get": {
+        "tags": [
+          "trophy"
+        ],
+        "summary": "Get all trophies",
+        "description": "Get all trophies",
+        "operationId": "getTrophies",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all trophies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trophies": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Trophy"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "trophy"
+        ],
+        "summary": "Create a trophy",
+        "description": "Create a trophy",
+        "operationId": "createTrophy",
+        "requestBody": {
+          "required": true,
+          "description": "Create a trophy in the database",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "competitionId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "seasonId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "teamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  }
+                },
+                "required": [
+                  "competitionId",
+                  "seasonId",
+                  "teamId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a trophy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trophy": {
+                      "$ref": "#/components/schemas/Trophy"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to create a trophy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/trophies/{trophyId}": {
+      "get": {
+        "tags": [
+          "trophy"
+        ],
+        "summary": "Get a specific trophy",
+        "description": "Get a specific trophy",
+        "operationId": "getTrophy",
+        "parameters": [
+          {
+            "name": "trophyId",
+            "in": "path",
+            "description": "ID of trophy to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the trophy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trophy": {
+                      "$ref": "#/components/schemas/Trophy"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No trophy was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "trophy"
+        ],
+        "summary": "Update a trophy",
+        "description": "Update a trophy",
+        "operationId": "updateTrophy",
+        "parameters": [
+          {
+            "name": "trophyId",
+            "in": "path",
+            "description": "ID of trophy to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Update a specific trophy",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "competitionId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "seasonId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "teamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the trophy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trophy": {
+                      "$ref": "#/components/schemas/Trophy"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to update a trophy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No trophy was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "trophy"
+        ],
+        "summary": "Delete a trophy",
+        "description": "Delete a trophy",
+        "operationId": "deleteTrophy",
+        "parameters": [
+          {
+            "name": "trophyId",
+            "in": "path",
+            "description": "ID of trophy to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the trophy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trophy": {
+                      "$ref": "#/components/schemas/Trophy"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No trophy was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/matches": {
+      "get": {
+        "tags": [
+          "match"
+        ],
+        "summary": "Get all matches",
+        "description": "Get all matches",
+        "operationId": "getMatches",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all matches",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "matches": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Match"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "match"
+        ],
+        "summary": "Create a match",
+        "description": "Create a match",
+        "operationId": "createMatch",
+        "requestBody": {
+          "required": true,
+          "description": "Create a match in the database",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "homeTeamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "awayTeamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "competitionId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "seasonId": {
+                    "type": "integer",
+                    "format": "i64"
+                  }
+                },
+                "required": [
+                  "homeTeamId",
+                  "awayTeamId",
+                  "competitionId",
+                  "seasonId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a match",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "match": {
+                      "$ref": "#/components/schemas/Match"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to create a match",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/matches/{matchId}": {
+      "get": {
+        "tags": [
+          "match"
+        ],
+        "summary": "Get a specific match",
+        "description": "Get a specific match",
+        "operationId": "getMatch",
+        "parameters": [
+          {
+            "name": "matchId",
+            "in": "path",
+            "description": "ID of match to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the match",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "match": {
+                      "$ref": "#/components/schemas/Match"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No match was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "match"
+        ],
+        "summary": "Update a match",
+        "description": "Update a match",
+        "operationId": "updateMatch",
+        "parameters": [
+          {
+            "name": "matchId",
+            "in": "path",
+            "description": "ID of match to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Update a specific match",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "homeTeamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "awayTeamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "competitionId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "seasonId": {
+                    "type": "integer",
+                    "format": "i64"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the match",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "match": {
+                      "$ref": "#/components/schemas/Match"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to update a match",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No match was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "match"
+        ],
+        "summary": "Delete a match",
+        "description": "Delete a match",
+        "operationId": "deleteMatch",
+        "parameters": [
+          {
+            "name": "matchId",
+            "in": "path",
+            "description": "ID of match to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the match",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "match": {
+                      "$ref": "#/components/schemas/Match"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No match was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/matches/{matchId}/goals": {
+      "get": {
+        "tags": [
+          "goal"
+        ],
+        "summary": "Get all goals",
+        "description": "Get all goals",
+        "operationId": "getGoals",
+        "parameters": [
+          {
+            "name": "matchId",
+            "in": "path",
+            "description": "ID of a match",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all goals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "goals": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Goal"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "goal"
+        ],
+        "summary": "Create a goal",
+        "description": "Create a goal",
+        "operationId": "createGoal",
+        "parameters": [
+          {
+            "name": "matchId",
+            "in": "path",
+            "description": "ID of a match",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Create a goal in the database",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "teamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "goalscorerId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "assistantId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "isOwnGoal": {
+                    "type": "boolean"
+                  },
+                  "goalTimestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "teamId",
+                  "goalscorerId",
+                  "assistantId",
+                  "goalTimestamp"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a goal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "goal": {
+                      "$ref": "#/components/schemas/Goal"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to create a goal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/matches/{matchId}/goals/{goalId}": {
+      "get": {
+        "tags": [
+          "goal"
+        ],
+        "summary": "Get a specific goal",
+        "description": "Get a specific goal",
+        "operationId": "getGoal",
+        "parameters": [
+          {
+            "name": "matchId",
+            "in": "path",
+            "description": "ID of a match",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "goalId",
+            "in": "path",
+            "description": "ID of goal to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the goal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "goal": {
+                      "$ref": "#/components/schemas/Goal"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No goal was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "goal"
+        ],
+        "summary": "Update a goal",
+        "description": "Update a goal",
+        "operationId": "updateGoal",
+        "parameters": [
+          {
+            "name": "matchId",
+            "in": "path",
+            "description": "ID of a match",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "goalId",
+            "in": "path",
+            "description": "ID of goal to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Update a specific goal",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "teamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "goalscorerId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "assistantId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "isOwnGoal": {
+                    "type": "boolean"
+                  },
+                  "goalTimestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the goal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "goal": {
+                      "$ref": "#/components/schemas/Goal"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to update a goal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No goal was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "goal"
+        ],
+        "summary": "Delete a goal",
+        "description": "Delete a goal",
+        "operationId": "deleteGoal",
+        "parameters": [
+          {
+            "name": "matchId",
+            "in": "path",
+            "description": "ID of a match",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "goalId",
+            "in": "path",
+            "description": "ID of goal to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the goal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "goal": {
+                      "$ref": "#/components/schemas/Goal"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No goal was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/transfers": {
+      "get": {
+        "tags": [
+          "transfer"
+        ],
+        "summary": "Get all transfers",
+        "description": "Get all transfers",
+        "operationId": "getTransfers",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all transfers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transfers": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Transfer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "transfer"
+        ],
+        "summary": "Create a transfer",
+        "description": "Create a transfer",
+        "operationId": "createTransfer",
+        "requestBody": {
+          "required": true,
+          "description": "Create a transfer in the database",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "playerId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "previousTeamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "newTeamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "fee": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "playerId",
+                  "previousTeamId",
+                  "newTeamId",
+                  "fee",
+                  "date"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a transfer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transfer": {
+                      "$ref": "#/components/schemas/Transfer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to create a transfer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/transfers/{transferId}": {
+      "get": {
+        "tags": [
+          "transfer"
+        ],
+        "summary": "Get a specific transfer",
+        "description": "Get a specific transfer",
+        "operationId": "getTransfer",
+        "parameters": [
+          {
+            "name": "transferId",
+            "in": "path",
+            "description": "ID of transfer to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the transfer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transfer": {
+                      "$ref": "#/components/schemas/Transfer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No transfer was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "transfer"
+        ],
+        "summary": "Update a transfer",
+        "description": "Update a transfer",
+        "operationId": "updateTransfer",
+        "parameters": [
+          {
+            "name": "transferId",
+            "in": "path",
+            "description": "ID of transfer to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Update a specific transfer",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "playerId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "previousTeamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "newTeamId": {
+                    "type": "integer",
+                    "format": "i64"
+                  },
+                  "fee": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the transfer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transfer": {
+                      "$ref": "#/components/schemas/Transfer"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/Token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to update a transfer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No transfer was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "transfer"
+        ],
+        "summary": "Delete a transfer",
+        "description": "Delete a transfer",
+        "operationId": "deleteTransfer",
+        "parameters": [
+          {
+            "name": "transferId",
+            "in": "path",
+            "description": "ID of transfer to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the transfer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transfer": {
+                      "$ref": "#/components/schemas/Transfer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "It's necessary to login to see this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "You don't have the permission to access this content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No transfer was found with the provided id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Robert"
+          },
+          "email": {
+            "type": "string",
+            "example": "robert@email.com"
+          },
+          "role": {
+            "type": "string",
+            "example": "USER",
+            "enum": [
+              "USER",
+              "ADMIN"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Country": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Argentina"
+          },
+          "code": {
+            "type": "string",
+            "example": "AR"
+          },
+          "flagUrl": {
+            "type": "string",
+            "example": "flag.jpg"
+          },
+          "teams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Team"
+            }
+          },
+          "players": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Player"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Position": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Midfielder"
+          },
+          "players": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Player"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Competition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "International League"
+          },
+          "code": {
+            "type": "string",
+            "example": "IL"
+          },
+          "logoUrl": {
+            "type": "string",
+            "example": "logo.jpg"
+          },
+          "type": {
+            "type": "string",
+            "example": "LEAGUE",
+            "enum": [
+              "LEAGUE",
+              "CUP"
+            ]
+          },
+          "trophies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Trophy"
+            }
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Match"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Season": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "year": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1999
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isCurrent": {
+            "type": "boolean",
+            "example": false
+          },
+          "trophies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Trophy"
+            }
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Match"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Team": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Youville Team"
+          },
+          "code": {
+            "type": "string",
+            "example": "YOT"
+          },
+          "foundingDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "logoUrl": {
+            "type": "string",
+            "example": "logo.jpg"
+          },
+          "country": {
+            "type": "Country",
+            "$ref": "#/components/schemas/Country"
+          },
+          "countryId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "players": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Player"
+            }
+          },
+          "trophies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Trophy"
+            }
+          },
+          "homeMatches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Match"
+            }
+          },
+          "awayMatches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Match"
+            }
+          },
+          "goals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Goal"
+            }
+          },
+          "playersSold": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Transfer"
+            }
+          },
+          "playerBought": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Transfer"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Player": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "dateOfBirth": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1999
+          },
+          "height": {
+            "type": "number",
+            "format": "double",
+            "example": 1.84
+          },
+          "weight": {
+            "type": "number",
+            "format": "double",
+            "example": 74.4
+          },
+          "position": {
+            "type": "Position",
+            "$ref": "#/components/schemas/Position"
+          },
+          "positionId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "country": {
+            "type": "Country",
+            "$ref": "#/components/schemas/Country"
+          },
+          "countryId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "currentTeam": {
+            "type": "Team",
+            "$ref": "#/components/schemas/Team"
+          },
+          "currentTeamId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "goals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Goal"
+            }
+          },
+          "assists": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Goal"
+            }
+          },
+          "transfers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Transfer"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Trophy": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "competition": {
+            "type": "Competition",
+            "$ref": "#/components/schemas/Competition"
+          },
+          "competitionId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "season": {
+            "type": "Season",
+            "$ref": "#/components/schemas/Season"
+          },
+          "seasonId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "team": {
+            "type": "Team",
+            "$ref": "#/components/schemas/Team"
+          },
+          "teamId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Match": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "homeTeam": {
+            "type": "Team",
+            "$ref": "#/components/schemas/Team"
+          },
+          "homeTeamId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "awayTeam": {
+            "type": "Team",
+            "$ref": "#/components/schemas/Team"
+          },
+          "awayTeamId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "competition": {
+            "type": "Competition",
+            "$ref": "#/components/schemas/Competition"
+          },
+          "competitionId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "season": {
+            "type": "Season",
+            "$ref": "#/components/schemas/Season"
+          },
+          "seasonId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "goals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Goal"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Goal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "match": {
+            "type": "Match",
+            "$ref": "#/components/schemas/Match"
+          },
+          "matchId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "team": {
+            "type": "Team",
+            "$ref": "#/components/schemas/Team"
+          },
+          "teamId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "goalscorer": {
+            "type": "Player",
+            "$ref": "#/components/schemas/Player"
+          },
+          "goalscorerId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "assistant": {
+            "type": "Player",
+            "$ref": "#/components/schemas/Player"
+          },
+          "assistantId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "isOwnGoal": {
+            "type": "boolean",
+            "example": false
+          },
+          "goalTimestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Transfer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "player": {
+            "type": "Player",
+            "$ref": "#/components/schemas/Player"
+          },
+          "playerId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "previousTeam": {
+            "type": "Team",
+            "$ref": "#/components/schemas/Team"
+          },
+          "previousTeamId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "newTeam": {
+            "type": "Team",
+            "$ref": "#/components/schemas/Team"
+          },
+          "newTeamId": {
+            "type": "integer",
+            "format": "i64",
+            "example": 1
+          },
+          "fee": {
+            "type": "string",
+            "example": "10000.00"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Token": {
+        "type": "string",
+        "example": "jwtToken"
+      },
+      "BadRequestError": {
+        "type": "object",
+        "properties": {
+          "err": {
+            "type": "string",
+            "example": "Something is wrong with the request"
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "type": "object",
+        "properties": {
+          "err": {
+            "type": "string",
+            "example": "It's necessary to login to see this content"
+          }
+        }
+      },
+      "ForbiddenError": {
+        "type": "object",
+        "properties": {
+          "err": {
+            "type": "string",
+            "example": "You don't have the permission to access this content"
+          }
+        }
+      },
+      "NotFoundError": {
+        "type": "object",
+        "properties": {
+          "err": {
+            "type": "string",
+            "example": "No content was found with the provided id"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
