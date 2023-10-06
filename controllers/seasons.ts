@@ -48,10 +48,6 @@ const createSeason = asyncWrapper(
       await createSeasonSchema({ year, start, end, isCurrent });
     } catch (error: any) {
       const errorMessage = error.errors[0].message as string;
-
-      if (errorMessage.includes('was found')) {
-        throw new NotFoundError(errorMessage);
-      }
       throw new BadRequestError(errorMessage);
     }
 

@@ -40,6 +40,15 @@ describe('User Endpoints', () => {
       expect(response.body.user.password).toBeFalsy();
     });
 
+    it('PATCH /api/v1/users/:userId should fail to update by forbidden', async () => {
+      const response = await request
+        .patch(`/api/v1/users/1`)
+        .send({ name: 'New Username' })
+        .set({ Authorization: token });
+      expect(response.statusCode).toEqual(StatusCodes.FORBIDDEN);
+      expect(response.body.err).toEqual(FORBIDDEN_ERROR_MESSAGE);
+    });
+
     it('PATCH /api/v1/users/:userId should fail to update the name by too short', async () => {
       const response = await request
         .patch(`/api/v1/users/${id}`)
@@ -189,6 +198,15 @@ describe('User Endpoints', () => {
         .set({ Authorization: token });
       expect(response.statusCode).toEqual(StatusCodes.FORBIDDEN);
       expect(response.body.user).toBeFalsy();
+      expect(response.body.err).toEqual(FORBIDDEN_ERROR_MESSAGE);
+    });
+
+    it('PATCH /api/v1/users/:userId should fail to update by forbidden', async () => {
+      const response = await request
+        .patch(`/api/v1/users/1`)
+        .send({ name: 'New Username' })
+        .set({ Authorization: token });
+      expect(response.statusCode).toEqual(StatusCodes.FORBIDDEN);
       expect(response.body.err).toEqual(FORBIDDEN_ERROR_MESSAGE);
     });
 
