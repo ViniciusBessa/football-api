@@ -30,8 +30,8 @@
     "swagger-ui-express": "^5.0.0"
   },
   "scripts": {
-    "build": "bun tsc && bun run prisma migrate deploy && bun run prisma generate",
-    "start": "bun ./dist/server.js",
+    "build": "bun run prisma migrate deploy && bun run prisma generate && bun start",
+    "start": "bun server.ts",
     "dev": "bun --watch server.ts",
     "db": "prisma migrate reset --force",
     "test": "bun db && bun test --coverage"

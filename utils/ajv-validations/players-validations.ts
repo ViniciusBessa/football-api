@@ -232,7 +232,7 @@ const updatePlayerSchema = ajv.compile<UpdatePlayerInput>({
 
       errorMessage: {
         type: PLAYER_MESSAGES.ID_TYPE,
-        countryExists: PLAYER_MESSAGES.NOT_FOUND,
+        playerExists: PLAYER_MESSAGES.NOT_FOUND,
       },
     },
 
